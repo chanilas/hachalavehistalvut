@@ -88,6 +88,7 @@ h1, h2, h3 { font-family: var(--display); font-weight: 600; margin: 0; text-wrap
 .anchor .ic { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #fff; flex: none; }
 .anchor .ic svg { width: 16px; height: 16px; }
 .demo-note {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
   margin-top: 14px; padding: 10px 14px; border-radius: var(--r-md); font-size: .92rem;
   background: color-mix(in srgb, var(--kodesh) 16%, var(--surface)); border: 1px dashed var(--kodesh);
 }
@@ -408,7 +409,8 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       <div class="anchor"><span class="ic" style="background:var(--dist)" data-icon="lock"></span>המהלך המחוזי למיומנויות · כיתות ה׳</div>
     </div>
     <div class="demo-note" id="demoNote" hidden>
-      זו תצוגה לדוגמה. היוזמות והשמות שמופיעים כאן הומצאו להמחשה, ומה שתכתבי כאן נשמר רק בדפדפן שלך. בגרסה המחוברת הכול נשמר בגיליון ומשותף לכל הרכזות.
+      <span>תצוגה מקדימה: מה שנכתב כאן נשמר רק בדפדפן הזה. בגרסה המחוברת לגיליון הכול משותף לכל הרכזות, ופס ההסבר הזה לא מופיע.</span>
+      <span class="demo-actions"><button class="btn ghost small" data-act="demo-fill">להציג דוגמאות</button><button class="btn ghost small" data-act="demo-clear">לנקות הכול</button></span>
     </div>
   </div>
 </header>
@@ -511,7 +513,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
 
   // ---------- data layer ----------
   var IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
-  var DEMO_KEY = 'tzmatim-demo-v4';
+  var DEMO_KEY = 'tzmatim-demo-v5';
 
   function gas(fn) {
     var args = Array.prototype.slice.call(arguments, 1);
@@ -529,7 +531,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     getAll: function () {
       var raw = store(DEMO_KEY), d = null;
       try { d = raw ? JSON.parse(raw) : null; } catch (e) { d = null; }
-      return Promise.resolve(d || demoData());
+      return Promise.resolve(d || { teams: [], goals: [], actions: [], district: [] });
     },
     save: function (t, o) { o.updatedAt = new Date().toISOString(); upsert(t, o); persistDemo(); return Promise.resolve(o); },
     remove: function (t, id) { state.data[t] = state.data[t].filter(function (x) { return x.id !== id; }); persistDemo(); return Promise.resolve(true); },
@@ -864,7 +866,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
 
   // ---------- admin ----------
   function renderGate() {
-    return '<form class="gate" data-form="admin"><h2>מבט ניהולי</h2><p style="margin:0;color:var(--muted)">לך ולמנהלת: מי עמדה בדרישות, מה הרכזות צריכות, ומה נתקע.</p>' +
+    return '<form class="gate" data-form="admin"><h2>מבט ניהולי</h2><p style="margin:0;color:var(--muted)">למנהלת ולצוות המוביל: מי עמדה בדרישות, מה הרכזות צריכות, ומה נתקע.</p>' +
       '<label for="adminCode" class="sr">קוד כניסה</label><input id="adminCode" type="password" inputmode="numeric" autocomplete="off" placeholder="קוד">' +
       '<div class="err" id="adminErr"></div><button class="btn primary" type="submit" style="justify-content:center">כניסה</button></form>';
   }
@@ -1144,6 +1146,9 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
           '<div style="padding:18px 22px 22px">' + chavayaStrip() + '</div></div></div>';
         break;
       case 'peek': peek(el.getAttribute('data-type'), id, el.getAttribute('data-coord')); break;
+      case 'demo-fill': case 'demo-clear':
+        state.data = act === 'demo-fill' ? demoData() : { teams: [], goals: [], actions: [], district: [] };
+        persistDemo(); render(); toast(act === 'demo-fill' ? 'נוספו דוגמאות' : 'הכול נוקה'); break;
       case 'logout': state.admin = false; render(); break;
       case 'close': case 'close-bg': closeModal(); break;
       case 'save':
@@ -1192,7 +1197,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     return api.getAll().then(function (d) {
       state.data = { teams: d.teams || [], goals: d.goals || [], actions: d.actions || [], district: d.district || [] };
       state.loaded = true;
-      setSync(IS_GAS ? 'מעודכן' : 'תצוגה לדוגמה');
+      setSync(IS_GAS ? 'מעודכן' : 'תצוגה מקדימה');
       if (!state.modalOpen) render();
     }).catch(function (e) {
       state.loaded = true; setSync('לא הצלחתי לטעון'); render(); console.error(e);
