@@ -395,7 +395,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
   var STATUS = { planned: 'מתוכנן', active: 'בביצוע', done: 'הושלם', stuck: 'נתקע' };
   var REGULARITY = ['פעם בשבוע', 'פעם בשבועיים', 'פעם בחודש', 'פעם במחצית', 'חד-פעמי', 'לאורך כל התקופה'];
   var NEEDS = ['שעות פרטניות', 'זמן בישיבת צוות', 'הדרכה / השתלמות', 'חומרי למידה', 'תקציב', 'החלטת הנהלה', 'שינוי במערכת השעות', 'עזרה טכנולוגית'];
-  var PARTNERS_BASE = ['מנהלת', 'סגנית', 'מחנכות', 'יועצת', 'רכזת פדגוגית', 'מדריכה', 'הורים', 'תלמידות'];
+  var PARTNERS_BASE = ['מנהלת', 'מחנכות', 'יועצת', 'רכזת פדגוגית', 'מדריכה', 'הורים', 'תלמידות'];
 
   // ---------- icons ----------
   var ICONS = {
@@ -440,7 +440,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
 
   // ---------- data layer ----------
   var IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
-  var DEMO_KEY = 'tzmatim-demo-v1';
+  var DEMO_KEY = 'tzmatim-demo-v2';
 
   function gas(fn) {
     var args = Array.prototype.slice.call(arguments, 1);
@@ -481,9 +481,9 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
         { id: 'team_math', coord: 'math', teachers: ['יוכי', 'בתיה', 'מלכי', 'רבקי'] }
       ],
       goals: [
-        { id: 'g1', coord: 'math', kind: 'subject', title: 'הטמעת תוכנית הלימודים החדשה במתמטיקה', desc: 'היכרות של כל הצוות עם התוכנית ומעבר הדרגתי לפרקים החדשים.', grades: ['all'], teachers: ['יוכי', 'בתיה', 'מלכי', 'רבקי'] },
-        { id: 'g2', coord: 'kodesh', kind: 'curiosity', title: 'תלמידות שואלות שאלות על הפרשה', desc: 'לפתח שאלת חקר אישית בכל פרשה.', grades: ['ד', 'ה'], teachers: ['רחלי', 'מירי'] },
-        { id: 'g3', coord: 'hebrew', kind: 'skills', title: 'כתיבה טיעונית בשכבות הבוגרות', desc: '', grades: ['ו', 'ז', 'ח'], teachers: ['חוי', 'נחמי'] }
+        { id: 'g1', coord: 'math', kind: 'subject', title: 'הטמעת תוכנית הלימודים החדשה במתמטיקה', desc: 'היכרות של כל הצוות עם התוכנית ומעבר הדרגתי לפרקים החדשים.' },
+        { id: 'g2', coord: 'kodesh', kind: 'curiosity', title: 'תלמידות שואלות שאלות על הפרשה', desc: 'לפתח שאלת חקר אישית בכל פרשה.' },
+        { id: 'g3', coord: 'hebrew', kind: 'skills', title: 'כתיבה טיעונית בשכבות הבוגרות', desc: '' }
       ],
       actions: [
         { id: 'a1', coord: 'math', title: 'פינת "מה היה קורה אילו" בשיעור', desc: 'פעם בשבוע שאלה פתוחה שאין לה פתרון אחד.', goals: ['g1'], tags: ['curiosity', 'subject'], grades: ['ה', 'ו'], teachers: ['יוכי', 'מלכי'], partners: ['מחנכות'], from: 'חשון', to: 'אדר ב׳', regularity: 'פעם בשבוע', needs: ['זמן בישיבת צוות'], needsOther: '', success: 'בכל כיתה נאספו 10 שאלות של תלמידות', status: 'active', reflection: '' },
@@ -578,7 +578,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       }).join('') +
       '<form class="add-person" data-form="teacher"><input type="text" id="newTeacher" placeholder="+ הוסיפי מורה" aria-label="שם מורה להוספה" maxlength="40"></form></div>';
 
-    h += '<div class="section-title"><h2>היעדים שלי</h2><span class="hint">יעדים בתחום הדעת וגם יעדים בית ספריים. לכל השכבות או לשכבה מסוימת.</span></div><div class="cards">' +
+    h += '<div class="section-title"><h2>היעדים שלי</h2><span class="hint">יעדים כלליים: בתחום הדעת וגם יעדים בית ספריים. את השכבות והשותפות מפרטים בפעולות.</span></div><div class="cards">' +
       goals.map(goalCard).join('') +
       '<button class="add-card" data-act="new-goal"><span>' + icon('plus') + 'יעד חדש</span></button></div>';
 
@@ -607,9 +607,8 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     var c = coord(g.coord);
     var kindTag = g.kind ? tagPills([g.kind], c) : '';
     return '<article class="card clickable" data-act="edit-goal" data-id="' + esc(g.id) + '" tabindex="0">' +
-      '<div class="row">' + kindTag + gradePills(g.grades) + '</div>' +
+      '<div class="row">' + kindTag + '</div>' +
       '<h3>' + esc(g.title) + '</h3>' + (g.desc ? '<p class="desc">' + esc(g.desc) + '</p>' : '') +
-      (g.teachers && g.teachers.length ? '<dl class="facts"><dt>עם</dt><dd>' + peopleText(g.teachers) + '</dd></dl>' : '') +
       '</article>';
   }
 
@@ -656,7 +655,6 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     var out = {};
     COORDS.forEach(function (c) {
       out[c.id] = {
-        goals: goalsOf(c.id).filter(function (x) { return gradesOf(x).indexOf(g) > -1; }),
         actions: actionsOf(c.id).filter(function (x) { return gradesOf(x).indexOf(g) > -1; }),
         district: g === 'ה' ? districtOf(c.id) : null
       };
@@ -665,7 +663,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
   }
   function gradeCount(g) {
     var n = 0, m = itemsForGrade(g);
-    COORDS.forEach(function (c) { n += m[c.id].actions.length + m[c.id].goals.length; });
+    COORDS.forEach(function (c) { n += m[c.id].actions.length; });
     return n;
   }
 
@@ -682,19 +680,15 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     var h = '<div class="grade-pick" role="group" aria-label="בחירת שכבה">' + GRADES.map(function (x) {
       var n = gradeCount(x);
       return '<button class="grade-btn" data-act="grade" data-g="' + x + '" aria-pressed="' + (x === g) + '" aria-label="שכבה ' + x + '">' + x + (n ? '<span class="n">' + n + '</span>' : '') + '</button>';
-    }).join('') + '</div><p class="section-title hint" style="margin:6px 0 0">כל מה שקורה בשכבה ' + g + '׳, מכל התחומים. יעדים שסומנו "כל השכבות" מופיעים בכל שכבה.</p>';
+    }).join('') + '</div><p class="section-title hint" style="margin:6px 0 0">כל מה שקורה בשכבה ' + g + '׳, מכל התחומים. פעולות שסומנו "כל השכבות" מופיעות בכל שכבה.</p>';
     h += '<div class="lanes">' + COORDS.map(function (c) {
       var x = m[c.id], body = '';
       if (x.district) body += districtCard(x.district, false);
-      body += x.goals.map(function (go) {
-        return '<article class="card"><span class="kind">יעד</span><div class="row">' + (go.kind ? tagPills([go.kind], c) : '') + '</div><h3>' + esc(go.title) + '</h3>' +
-          (go.teachers && go.teachers.length ? '<dl class="facts"><dt>עם</dt><dd>' + peopleText(go.teachers) + '</dd></dl>' : '') + '</article>';
-      }).join('');
       body += x.actions.map(function (a) {
         return '<article class="card"><span class="kind">פעולה</span><div class="row">' + tagPills(a.tags, c) + '</div><h3>' + esc(a.title) + '</h3>' +
           '<div class="row">' + (whenText(a) ? '<span class="pill when">' + whenText(a) + '</span>' : '') + '<span class="pill st-' + (a.status || 'planned') + '">' + STATUS[a.status || 'planned'] + '</span></div></article>';
       }).join('');
-      if (!x.goals.length && !x.actions.length && !x.district) body += '<div class="empty">אין עדיין משהו בשכבה הזו.</div>';
+      if (!x.actions.length && !x.district) body += '<div class="empty">אין עדיין משהו בשכבה הזו.</div>';
       return '<section class="lane" style="--c:' + c.color + '"><header><i></i>' + c.name + '</header>' + body + '</section>';
     }).join('') + '</div>';
     return h;
@@ -882,24 +876,22 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
 
   function editGoal(g) {
     var cid = state.coord, c = coord(cid), isNew = !g;
-    g = g || { id: uid('g'), coord: cid, kind: 'subject', title: '', desc: '', grades: ['all'], teachers: [] };
+    g = g || { id: uid('g'), coord: cid, kind: 'subject', title: '', desc: '' };
     var body = '<div class="field"><span class="lbl">סוג היעד</span>' + chipGroup('kind', [
       { value: 'subject', label: icon('book') + 'יעד מקצועי בתחום הדעת', cls: 'big t-subject', style: '--c:' + c.color },
       { value: 'curiosity', label: icon('spark') + 'סקרנות וחקרנות', cls: 'big t-curiosity' },
       { value: 'skills', label: icon('puzzle') + 'הוראת מיומנויות', cls: 'big t-skills' }
     ], [g.kind], { single: true }) + '</div>' +
       '<div class="field"><label for="f_title">היעד</label><input type="text" id="f_title" maxlength="140" value="' + esc(g.title) + '" placeholder="לדוגמה: הטמעת תוכנית הלימודים החדשה"></div>' +
-      '<div class="field"><label for="f_desc">פירוט <span class="sub">(לא חובה)</span></label><textarea id="f_desc">' + esc(g.desc) + '</textarea></div>' +
-      gradeField(g.grades) + teacherField(cid, g.teachers);
+      '<div class="field"><label for="f_desc">פירוט <span class="sub">(לא חובה)</span></label><textarea id="f_desc">' + esc(g.desc) + '</textarea></div>';
     openModal(isNew ? 'יעד חדש' : 'עריכת יעד', body, function (form) {
       var o = Object.assign({}, g, {
-        kind: readChips(form, 'kind')[0] || 'subject', title: val('f_title'), desc: val('f_desc'),
-        grades: readChips(form, 'grades'), teachers: readChips(form, 'teachers')
+        kind: readChips(form, 'kind')[0] || 'subject', title: val('f_title'), desc: val('f_desc')
       });
+      delete o.grades; delete o.teachers;
       if (!o.title) return formErr('כתבי מה היעד.');
-      if (!o.grades.length) return formErr('בחרי שכבה אחת לפחות, או "כל השכבות".');
       return o;
-    }, isNew ? null : function () { return { type: 'goals', id: g.id }; }, 'goals');
+    }, isNew ? null : function () { return { type: 'goals', id: g.id }; });
     modalRoot._type = 'goals';
   }
 

@@ -16,9 +16,8 @@ const TABLES = {
   },
   goals: {
     sheet: 'יעדים',
-    headers: ['מזהה', 'רכזת', 'סוג יעד', 'יעד', 'פירוט', 'שכבות', 'מורות', 'עודכן'],
-    row: o => [o.id, coordName(o.coord), goalKindName(o.kind), o.title, o.desc,
-      gradesText(o.grades), (o.teachers || []).join(', ')]
+    headers: ['מזהה', 'רכזת', 'סוג יעד', 'יעד', 'פירוט', 'עודכן'],
+    row: o => [o.id, coordName(o.coord), goalKindName(o.kind), o.title, o.desc]
   },
   actions: {
     sheet: 'פעולות',
