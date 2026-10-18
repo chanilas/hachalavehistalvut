@@ -21,10 +21,10 @@ const TABLES = {
   },
   actions: {
     sheet: 'פעולות',
-    headers: ['מזהה', 'רכזת', 'פעולה', 'פירוט', 'מקדמת', 'שכבות', 'מורות', 'שותפים', 'מחודש', 'עד חודש',
+    headers: ['מזהה', 'רכזת', 'פעולה', 'פירוט', 'מקדמת', 'מודל חוויה', 'שלבי חוויה', 'שכבות', 'מורות', 'שותפים', 'מחודש', 'עד חודש',
       'סדירות', 'מה צריך', 'איך נדע שהצלחנו', 'סטטוס', 'מה עובד / מה נתקע', 'עודכן'],
     row: o => [o.id, coordName(o.coord), o.title, o.desc, (o.tags || []).map(tagName).join(', '),
-      gradesText(o.grades), (o.teachers || []).join(', '), (o.partners || []).join(', '), o.from, o.to,
+      chavayaName(o.chavaya), (o.stages || []).map(stageName).join(', '), gradesText(o.grades), (o.teachers || []).join(', '), (o.partners || []).join(', '), o.from, o.to,
       o.regularity, [].concat(o.needs || [], o.needsOther ? [o.needsOther] : []).join(', '), o.success,
       statusName(o.status), o.reflection]
   },
@@ -130,6 +130,12 @@ function goalKindName(k) {
 }
 function tagName(t) {
   return { curiosity: 'סקרנות וחקרנות', skills: 'הוראת מיומנויות', subject: 'יעד מקצועי' }[t] || t;
+}
+function chavayaName(c) {
+  return { long: 'התנסות ארוכה', short: 'התנסות קצרה', none: 'לא' }[c] || '';
+}
+function stageName(s) {
+  return { research: 'חקר', organize: 'ארגון', create: 'יצירה', present: 'הצגה' }[s] || s;
 }
 function statusName(s) {
   return { planned: 'מתוכנן', active: 'בביצוע', done: 'הושלם', stuck: 'נתקע' }[s] || '';

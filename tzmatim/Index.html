@@ -23,6 +23,11 @@
   --skl: #8C5CF0;
   --dist: #2B2550;
 
+  --h1: #FF7A3D;
+  --h2: #F2A31B;
+  --h3: #EC4F86;
+  --h4: #8C5CF0;
+
   --ok: #1FAE78;
   --warn: #F2A31B;
   --bad: #E5484D;
@@ -39,7 +44,7 @@
   :root:not([data-theme="light"]) {
     --bg: #15132A; --surface: #211E3C; --ink: #F2F0FF; --muted: #ABA6CF; --line: #36325C; --soft: #2A2649;
     --kodesh: #F7B544; --hebrew: #F46C9C; --english: #6E9CF5; --math: #3CC690;
-    --cur: #FF9058; --skl: #A27DF7; --dist: #CFCAF5;
+    --cur: #FF9058; --skl: #A27DF7; --dist: #CFCAF5; --h1: #FF9058; --h2: #F7B544; --h3: #F46C9C; --h4: #A27DF7;
     --shadow: 0 1px 0 rgba(0,0,0,.2), 0 10px 28px -12px rgba(0,0,0,.6);
     color-scheme: dark;
   }
@@ -47,7 +52,7 @@
 :root[data-theme="dark"] {
   --bg: #15132A; --surface: #211E3C; --ink: #F2F0FF; --muted: #ABA6CF; --line: #36325C; --soft: #2A2649;
   --kodesh: #F7B544; --hebrew: #F46C9C; --english: #6E9CF5; --math: #3CC690;
-  --cur: #FF9058; --skl: #A27DF7; --dist: #CFCAF5;
+  --cur: #FF9058; --skl: #A27DF7; --dist: #CFCAF5; --h1: #FF9058; --h2: #F7B544; --h3: #F46C9C; --h4: #A27DF7;
   --shadow: 0 1px 0 rgba(0,0,0,.2), 0 10px 28px -12px rgba(0,0,0,.6);
   color-scheme: dark;
 }
@@ -316,6 +321,46 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
 
 .toast { position: fixed; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 20px; border-radius: 999px; font-weight: 700; z-index: 30; box-shadow: var(--shadow); }
 
+.anchor-btn { cursor: pointer; color: var(--ink); font-family: var(--body); }
+.anchor-btn:hover { box-shadow: var(--shadow); }
+.chv-tag { font-size: .78rem; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: color-mix(in srgb, var(--cur) 16%, var(--surface)); color: color-mix(in srgb, var(--cur) 75%, var(--ink)); }
+
+/* ---------- מודל חוויה ---------- */
+.chv { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+.chv-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.chv-word {
+  font-family: var(--display); font-size: 2.6rem; font-weight: 700; line-height: 1; letter-spacing: 1px;
+  background: linear-gradient(to left, var(--h1), var(--h2), var(--h3), var(--h4)); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.chv-head p { margin: 0; color: var(--muted); max-width: 52ch; }
+.chv-head p b { color: var(--ink); }
+.chv-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.chv-steps li { --s: var(--h1); background: color-mix(in srgb, var(--s) 13%, var(--surface)); border-radius: var(--r-md); padding: 14px; display: flex; flex-direction: column; gap: 6px; position: relative; min-width: 0; }
+.chv-steps .top { display: flex; align-items: center; gap: 10px; }
+.chv-steps .ic { width: 36px; height: 36px; border-radius: 50%; background: var(--s); color: #fff; display: grid; place-items: center; flex: none; }
+.chv-steps .ic svg { width: 18px; height: 18px; }
+.chv-steps b { font-family: var(--display); font-size: 1.2rem; font-weight: 600; }
+.chv-steps .no { position: absolute; top: 10px; inset-inline-end: 12px; font-family: var(--display); font-weight: 600; color: color-mix(in srgb, var(--s) 70%, var(--ink)); opacity: .55; }
+.chv-steps .t { color: var(--muted); font-size: .92rem; }
+.chv-steps.compact li { padding: 10px 12px; }
+.chv-steps.compact .ic { width: 28px; height: 28px; }
+.chv-steps.compact .ic svg { width: 14px; height: 14px; }
+.chv-steps.compact b { font-size: 1rem; }
+.chv-steps.compact .t { font-size: .84rem; }
+.chv-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.chv-modes div { border: 1px dashed var(--line); border-radius: var(--r-md); padding: 12px 14px; font-size: .93rem; }
+.chv-modes b { display: block; font-family: var(--display); font-weight: 600; font-size: 1.02rem; }
+.chv-teacher { margin: 0; padding: 12px 14px; border-radius: var(--r-md); background: var(--soft); font-size: .95rem; }
+.chv-details { margin-top: 30px; }
+.chv-details summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--display); font-weight: 600; font-size: 1.15rem; padding: 8px 16px 8px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+.chv-details summary::-webkit-details-marker { display: none; }
+.chv-details summary .chv-tag { font-family: var(--body); }
+.chv-details[open] summary { margin-bottom: 12px; }
+.chv-field { background: color-mix(in srgb, var(--cur) 7%, var(--surface)); border: 1px solid color-mix(in srgb, var(--cur) 30%, var(--line)); border-radius: var(--r-md); padding: 14px; }
+.chip.big[aria-pressed="true"].t-stage { background: var(--s); border-color: var(--s); color: #fff; }
+.chip[aria-pressed="true"] .sub { color: inherit; opacity: .8; }
+.pill.chv-pill { background: linear-gradient(to left, color-mix(in srgb, var(--h1) 20%, var(--surface)), color-mix(in srgb, var(--h4) 20%, var(--surface))); color: var(--ink); }
+.pill.chv-pill i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .empty-state { text-align: center; padding: 30px 16px; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: var(--r-lg); }
 
@@ -324,6 +369,8 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
   .link-card .pair { grid-template-columns: 1fr; }
   .link-card .knot { justify-self: center; }
   .need-row { grid-template-columns: 110px 1fr 30px; }
+  .chv-steps { grid-template-columns: 1fr 1fr; }
+  .chv-modes { grid-template-columns: 1fr; }
   .plan-head h2 { font-size: 1.5rem; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
@@ -347,7 +394,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       </div>
     </div>
     <div class="anchors" aria-label="המוקדים של בית הספר השנה">
-      <div class="anchor"><span class="ic" style="background:var(--cur)" data-icon="spark"></span>למידה מבוססת סקרנות וחקרנות</div>
+      <button class="anchor anchor-btn" data-act="chavaya"><span class="ic" style="background:var(--cur)" data-icon="spark"></span>למידה מבוססת סקרנות וחקרנות<span class="chv-tag">מודל חוויה · מה זה?</span></button>
       <div class="anchor"><span class="ic" style="background:var(--skl)" data-icon="puzzle"></span>הוראה מבוססת מיומנויות</div>
       <div class="anchor"><span class="ic" style="background:var(--dist)" data-icon="lock"></span>המהלך המחוזי למיומנויות · כיתות ה׳</div>
     </div>
@@ -395,6 +442,17 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
   var STATUS = { planned: 'מתוכנן', active: 'בביצוע', done: 'הושלם', stuck: 'נתקע' };
   var REGULARITY = ['פעם בשבוע', 'פעם בשבועיים', 'פעם בחודש', 'פעם במחצית', 'חד-פעמי', 'לאורך כל התקופה'];
   var NEEDS = ['שעות פרטניות', 'זמן בישיבת צוות', 'הדרכה / השתלמות', 'חומרי למידה', 'תקציב', 'החלטת הנהלה', 'שינוי במערכת השעות', 'עזרה טכנולוגית'];
+  // מודל חוויה: חקר, ארגון, יצירה, הצגה
+  var STAGES = [
+    { id: 'research', name: 'חקר', icon: 'search', color: 'var(--h1)', short: 'שואלות ומחפשות',
+      text: 'הלמידה מתחילה בשאלה של התלמידות. הן חוקרות, אוספות מידע ומגלות בעצמן.' },
+    { id: 'organize', name: 'ארגון', icon: 'users', color: 'var(--h2)', short: 'עובדות יחד',
+      text: 'עבודה בקבוצות: חלוקת תפקידים, שיתוף פעולה וניהול זמן.' },
+    { id: 'create', name: 'יצירה', icon: 'brush', color: 'var(--h3)', short: 'יוצרות תוצר',
+      text: 'התלמידות פעלניות: הופכות את מה שגילו לתוצר משלהן.' },
+    { id: 'present', name: 'הצגה', icon: 'easel', color: 'var(--h4)', short: 'מציגות לאחרות',
+      text: 'מציגות לפני הכיתה, בדרך שמתאימה לכל אחת: הרצאה, דגם, ערכה, המחזה.' }
+  ];
   var PARTNERS_BASE = ['מנהלת', 'מחנכות', 'יועצת', 'רכזת פדגוגית', 'מדריכה', 'הורים', 'תלמידות'];
 
   // ---------- icons ----------
@@ -408,6 +466,10 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     link: '<path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
     plus: '<path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>',
     x: '<path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>',
+    search: '<circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="2.6" fill="none"/><path d="M15.5 15.5L21 21" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>',
+    users: '<circle cx="8" cy="8" r="3.5" fill="currentColor"/><circle cx="16.5" cy="9" r="3" fill="currentColor"/><path d="M1.5 20a6.5 6.5 0 0113 0zM13.5 20a5.5 5.5 0 019-4.2V20z" fill="currentColor"/>',
+    brush: '<path d="M20.5 3.5c-3 1-8.5 6-10.3 8.5l2.8 2.8c2.5-1.8 7.5-7.3 8.5-10.3zM8.5 13.5c-2.5 0-4 1.8-4 4 0 1.3-.8 2.3-2 2.5 1 1 2.5 1.5 4 1.5 3 0 5-2 5-4.5z" fill="currentColor"/>',
+    easel: '<path d="M3 3h18v2h-1v10H4V5H3zM11 16h2v2l3 4h-2.4L12 19.8 10.4 22H8l3-4z" fill="currentColor"/>',
     check: '<path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
   };
   function icon(n) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || '') + '</svg>'; }
@@ -440,7 +502,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
 
   // ---------- data layer ----------
   var IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
-  var DEMO_KEY = 'tzmatim-demo-v2';
+  var DEMO_KEY = 'tzmatim-demo-v3';
 
   function gas(fn) {
     var args = Array.prototype.slice.call(arguments, 1);
@@ -486,8 +548,8 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
         { id: 'g3', coord: 'hebrew', kind: 'skills', title: 'כתיבה טיעונית בשכבות הבוגרות', desc: '' }
       ],
       actions: [
-        { id: 'a1', coord: 'math', title: 'פינת "מה היה קורה אילו" בשיעור', desc: 'פעם בשבוע שאלה פתוחה שאין לה פתרון אחד.', goals: ['g1'], tags: ['curiosity', 'subject'], grades: ['ה', 'ו'], teachers: ['יוכי', 'מלכי'], partners: ['מחנכות'], from: 'חשון', to: 'אדר ב׳', regularity: 'פעם בשבוע', needs: ['זמן בישיבת צוות'], needsOther: '', success: 'בכל כיתה נאספו 10 שאלות של תלמידות', status: 'active', reflection: '' },
-        { id: 'a2', coord: 'kodesh', title: 'יומן חוקרת לפרשת השבוע', desc: '', goals: ['g2'], tags: ['curiosity'], grades: ['ה'], teachers: ['רחלי'], partners: ['הורים'], from: 'תשרי', to: 'שבט', regularity: 'פעם בשבוע', needs: ['חומרי למידה'], needsOther: '', success: '', status: 'planned', reflection: '' },
+        { id: 'a1', coord: 'math', title: 'פינת "מה היה קורה אילו" בשיעור', desc: 'פעם בשבוע שאלה פתוחה שאין לה פתרון אחד.', goals: ['g1'], tags: ['curiosity', 'subject'], chavaya: 'short', stages: ['research', 'organize', 'present'], grades: ['ה', 'ו'], teachers: ['יוכי', 'מלכי'], partners: ['מחנכות'], from: 'חשון', to: 'אדר ב׳', regularity: 'פעם בשבוע', needs: ['זמן בישיבת צוות'], needsOther: '', success: 'בכל כיתה נאספו 10 שאלות של תלמידות', status: 'active', reflection: '' },
+        { id: 'a2', coord: 'kodesh', title: 'יומן חוקרת לפרשת השבוע', desc: '', goals: ['g2'], tags: ['curiosity'], chavaya: 'long', stages: ['research', 'organize', 'create', 'present'], grades: ['ה'], teachers: ['רחלי'], partners: ['הורים'], from: 'תשרי', to: 'שבט', regularity: 'פעם בשבוע', needs: ['חומרי למידה'], needsOther: '', success: '', status: 'planned', reflection: '' },
         { id: 'a3', coord: 'hebrew', title: 'שיעור מיומנות: לנמק ולהכריע', desc: 'מיומנות אחת בחודש, עם שפה משותפת לכל הכיתות.', goals: ['g3'], tags: ['skills'], grades: ['ז', 'ח'], teachers: ['חוי'], partners: ['רכזת פדגוגית'], from: 'כסלו', to: 'ניסן', regularity: 'פעם בחודש', needs: ['הדרכה / השתלמות'], needsOther: '', success: '', status: 'planned', reflection: '' },
         { id: 'a4', coord: 'english', title: 'Question of the week', desc: 'שאלה באנגלית שהתלמידות חוקרות במשך שבוע.', goals: [], tags: ['curiosity'], grades: ['ה', 'ו'], teachers: ['ליבי'], partners: [], from: 'כסלו', to: 'טבת', regularity: 'פעם בשבוע', needs: [], needsOther: '', success: '', status: 'stuck', reflection: 'קשה למצוא זמן בשיעור אחרי המבחנים.' }
       ],
@@ -553,6 +615,21 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     hydrateIcons(main);
   }
 
+  function chavayaStrip(compact) {
+    var steps = '<ol class="chv-steps' + (compact ? ' compact' : '') + '">' + STAGES.map(function (s, i) {
+      return '<li style="--s:' + s.color + '"><span class="no">' + (i + 1) + '</span><span class="top"><span class="ic">' + icon(s.icon) + '</span><b>' + s.name + '</b></span>' +
+        '<span class="t">' + (compact ? s.short : s.text) + '</span></li>';
+    }).join('') + '</ol>';
+    if (compact) return steps;
+    return '<div class="chv"><div class="chv-head"><span class="chv-word">חוויה</span>' +
+      '<p><b>חקר, ארגון, יצירה והצגה.</b> המודל שלנו ללמידה מבוססת סקרנות וחקרנות, שצמח מתוך יסודי עכשווי. מעגל למידה שמתחיל בשאלה של התלמידות ונגמר בתוצר שהן מציגות.</p></div>' +
+      steps +
+      '<div class="chv-modes"><div><b>התנסות ארוכה</b>תהליך לאורך תקופה או שנה: חקר ארוך, ואחריו יצירה והצגה.</div>' +
+      '<div><b>התנסות קצרה</b>שיעור או יחידת הוראה אחת שכל המעגל נמצא בתוכה.</div></div>' +
+      '<p class="chv-teacher">המורה לא מרצה והתלמידות לא רק כותבות במחברת. הלמידה נובעת מהחקר, והמורה מלווה אותן לאורך הדרך.</p></div>';
+  }
+  function hasChavaya(a) { return a.chavaya === 'long' || a.chavaya === 'short'; }
+
   function renderPicker() {
     return '<p class="pick-intro">מי את? בחרי את התחום שלך כדי לבנות את התוכנית.</p><div class="coord-grid">' +
       COORDS.map(function (c) {
@@ -585,7 +662,9 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     h += '<div class="section-title"><h2>המהלך המחוזי · כיתות ה׳</h2><span class="hint">כבר חלק מהתוכנית של כולן. ספרי איך זה נראה אצלך.</span></div><div class="cards">' +
       districtCard(d, true) + '</div>';
 
-    h += '<div class="section-title"><h2>הפעולות שלי</h2><span class="hint">לפחות פעולה אחת לסקרנות וחקרנות ולפחות אחת להוראת מיומנויות.</span></div><div class="cards">' +
+    var chvOpen = !acts.some(hasChavaya);
+    h += '<details class="chv-details"' + (chvOpen ? ' open' : '') + '><summary><span class="chv-word" style="font-size:1.4rem">חוויה</span>תזכורת: מה זה מודל חוויה<span class="chv-tag">לחצי לפתיחה</span></summary>' + chavayaStrip() + '</details>';
+    h += '<div class="section-title"><h2>הפעולות שלי</h2><span class="hint">לפחות פעולה אחת לסקרנות וחקרנות (כדאי לפי מודל חוויה) ולפחות אחת להוראת מיומנויות.</span></div><div class="cards">' +
       acts.map(function (a) { return actionCard(a, true); }).join('') +
       '<button class="add-card" data-act="new-action"><span>' + icon('plus') + 'פעולה חדשה</span></button></div>';
     return h;
@@ -612,6 +691,12 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       '</article>';
   }
 
+  function chvPill(a) {
+    if (!hasChavaya(a)) return '';
+    var dots = STAGES.filter(function (s) { return (a.stages || []).indexOf(s.id) > -1; })
+      .map(function (s) { return '<i style="background:' + s.color + '" title="' + s.name + '"></i>'; }).join('');
+    return '<span class="pill chv-pill">חוויה · ' + (a.chavaya === 'long' ? 'ארוכה' : 'קצרה') + dots + '</span>';
+  }
   function actionCard(a, editable, showOwner) {
     var c = coord(a.coord);
     var goalNames = (a.goals || []).map(function (id) {
@@ -620,7 +705,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     var needs = [].concat(a.needs || [], a.needsOther ? [a.needsOther] : []);
     return '<article class="card' + (editable ? ' clickable' : '') + '"' + (editable ? ' data-act="edit-action" data-id="' + esc(a.id) + '" tabindex="0"' : '') + '>' +
       (showOwner ? '<span class="owner" style="background:' + c.color + '" title="רכזת ' + c.name + '"></span>' : '') +
-      '<div class="row">' + tagPills(a.tags, c) + '</div>' +
+      '<div class="row">' + tagPills(a.tags, c) + chvPill(a) + '</div>' +
       '<h3>' + esc(a.title) + '</h3>' + (a.desc ? '<p class="desc">' + esc(a.desc) + '</p>' : '') +
       '<dl class="facts">' +
       (showOwner ? '<dt>רכזת</dt><dd>' + c.name + '</dd>' : '') +
@@ -685,7 +770,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       var x = m[c.id], body = '';
       if (x.district) body += districtCard(x.district, false);
       body += x.actions.map(function (a) {
-        return '<article class="card"><span class="kind">פעולה</span><div class="row">' + tagPills(a.tags, c) + '</div><h3>' + esc(a.title) + '</h3>' +
+        return '<article class="card"><span class="kind">פעולה</span><div class="row">' + tagPills(a.tags, c) + chvPill(a) + '</div><h3>' + esc(a.title) + '</h3>' +
           '<div class="row">' + (whenText(a) ? '<span class="pill when">' + whenText(a) + '</span>' : '') + '<span class="pill st-' + (a.status || 'planned') + '">' + STATUS[a.status || 'planned'] + '</span></div></article>';
       }).join('');
       if (!x.actions.length && !x.district) body += '<div class="empty">אין עדיין משהו בשכבה הזו.</div>';
@@ -778,18 +863,22 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       '<div class="stats">' +
       '<div class="stat"><b>' + state.data.goals.length + '</b><span>יעדים</span></div>' +
       '<div class="stat"><b>' + acts.length + '</b><span>פעולות</span></div>' +
+      '<div class="stat"><b>' + acts.filter(hasChavaya).length + '</b><span>במודל חוויה</span></div>' +
       '<div class="stat"><b>' + count('active') + '</b><span>בביצוע</span></div>' +
       '<div class="stat"><b>' + count('done') + '</b><span>הושלמו</span></div>' +
       '<div class="stat"><b style="color:var(--bad)">' + count('stuck') + '</b><span>נתקעו</span></div></div>';
 
     h += '<div class="section-title"><h2>עמידה בדרישות</h2></div><div class="table-scroll"><table><thead><tr><th>רכזת</th>' +
       Object.keys(REQ_LABELS).map(function (k) { return '<th>' + REQ_LABELS[k] + '</th>'; }).join('') +
-      '<th>יעדים</th><th>פעולות</th><th>מורות בצוות</th></tr></thead><tbody>' +
+      '<th>מודל חוויה</th><th>יעדים</th><th>פעולות</th><th>מורות בצוות</th></tr></thead><tbody>' +
       COORDS.map(function (c) {
         var r = reqs(c.id);
         return '<tr><td><b>' + c.name + '</b></td>' + Object.keys(REQ_LABELS).map(function (k) {
           return '<td class="' + (r[k] ? 'yes' : 'no') + '">' + (r[k] ? 'יש' : 'חסר') + '</td>';
-        }).join('') + '<td class="num">' + goalsOf(c.id).length + '</td><td class="num">' + actionsOf(c.id).length + '</td><td class="num">' + team(c.id).length + '</td></tr>';
+        }).join('') + (function () {
+          var n = actionsOf(c.id).filter(hasChavaya).length;
+          return '<td class="' + (n ? 'yes' : 'no') + '">' + (n ? n + ' פעולות' : 'אין עדיין') + '</td>';
+        })() + '<td class="num">' + goalsOf(c.id).length + '</td><td class="num">' + actionsOf(c.id).length + '</td><td class="num">' + team(c.id).length + '</td></tr>';
       }).join('') + '</tbody></table></div>';
 
     var needCount = {}, other = [];
@@ -910,6 +999,13 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
         { value: 'skills', label: icon('puzzle') + 'הוראת מיומנויות', cls: 'big t-skills' },
         { value: 'subject', label: icon('book') + 'יעד מקצועי בתחום', cls: 'big t-subject', style: '--c:' + c.color }
       ], a.tags) + '</div>' +
+      '<div class="field chv-field" id="chvField"' + ((a.tags || []).indexOf('curiosity') > -1 ? '' : ' hidden') + '>' +
+      '<span class="lbl">האם הפעולה בנויה לפי מודל חוויה?</span>' + chavayaStrip(true) +
+      chipGroup('chv', [{ value: 'long', label: 'התנסות ארוכה <span class="sub">· תהליך לאורך תקופה</span>' }, { value: 'short', label: 'התנסות קצרה <span class="sub">· שיעור או יחידה אחת</span>' }, { value: 'none', label: 'לא הפעם' }],
+        [a.chavaya || ''], { single: true }) +
+      '<span class="lbl">אילו שלבים יש בה?</span>' + chipGroup('stages', STAGES.map(function (s) {
+        return { value: s.id, label: icon(s.icon) + s.name, cls: 'big t-stage', style: '--s:' + s.color };
+      }), a.stages) + '</div>' +
       (goals.length ? '<div class="field"><span class="lbl">לאיזה יעד היא שייכת?</span>' + chipGroup('goals', goals.map(function (g) { return { value: g.id, label: esc(g.title) }; }), a.goals) + '</div>' : '') +
       gradeField(a.grades) + teacherField(cid, a.teachers, 'אילו מורות מהצוות שותפות') +
       '<div class="field"><span class="lbl">שותפים נוספים</span>' + chipGroup('partners', partners, a.partners) + '</div>' +
@@ -927,6 +1023,8 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
         from: val('f_from'), to: val('f_to'), regularity: readChips(form, 'reg')[0] || '', needs: readChips(form, 'needs'),
         needsOther: val('f_needsOther'), success: val('f_success'), status: readChips(form, 'status')[0] || 'planned', reflection: val('f_refl')
       });
+      o.chavaya = o.tags.indexOf('curiosity') > -1 ? (readChips(form, 'chv')[0] || '') : '';
+      o.stages = hasChavaya(o) ? readChips(form, 'stages') : [];
       if (!o.title) return formErr('תני שם לפעולה.');
       if (!o.tags.length) return formErr('סמני מה הפעולה מקדמת.');
       if (!o.grades.length) return formErr('בחרי שכבה אחת לפחות, או "כל השכבות".');
@@ -999,6 +1097,15 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
         if (v === 'all' && on) grp.querySelectorAll('.chip:not([data-val="all"])').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
         if (v !== 'all' && on) grp.querySelector('[data-val="all"]').setAttribute('aria-pressed', 'false');
       }
+      if (grp.getAttribute('data-chips') === 'tags') {
+        var cf = document.getElementById('chvField');
+        if (cf) cf.hidden = !grp.querySelector('[data-val="curiosity"][aria-pressed="true"]');
+      }
+      if (grp.getAttribute('data-chips') === 'chv') {
+        var sg = document.querySelector('[data-chips="stages"]'), mode = chip.getAttribute('data-val');
+        if (mode === 'none') sg.querySelectorAll('.chip').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+        else if (!sg.querySelector('[aria-pressed="true"]')) sg.querySelectorAll('.chip').forEach(function (b) { b.setAttribute('aria-pressed', 'true'); });
+      }
       return;
     }
     var el = e.target.closest('[data-act]');
@@ -1017,6 +1124,12 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       case 'edit-district': editDistrict(); break;
       case 'mode': state.boardMode = el.getAttribute('data-mode'); render(); break;
       case 'grade': state.boardGrade = el.getAttribute('data-g'); render(); break;
+      case 'chavaya':
+        state.modalOpen = true;
+        modalRoot.innerHTML = '<div class="overlay" data-act="close-bg"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">' +
+          '<header><h2 id="mTitle">מודל חוויה</h2><button class="x" data-act="close" aria-label="סגירה">' + icon('x') + '</button></header>' +
+          '<div style="padding:18px 22px 22px">' + chavayaStrip() + '</div></div></div>';
+        break;
       case 'peek': peek(el.getAttribute('data-type'), id, el.getAttribute('data-coord')); break;
       case 'logout': state.admin = false; render(); break;
       case 'close': case 'close-bg': closeModal(); break;
