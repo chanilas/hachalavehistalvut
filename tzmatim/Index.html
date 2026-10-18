@@ -1205,7 +1205,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     });
   }
   hydrateIcons(document);
-  if (!IS_GAS) document.getElementById('demoNote').hidden = false;
+  document.getElementById('demoNote').hidden = IS_GAS; document.getElementById('toast').hidden = true;
   render();
   load();
   // רענון כל דקה, כדי לראות מה רכזות אחרות הוסיפו
