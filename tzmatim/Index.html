@@ -172,6 +172,15 @@ main { padding-block: 10px 60px; }
 .card.clickable { cursor: pointer; transition: box-shadow .15s, transform .15s; }
 .card.clickable:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
 
+.goal-list { display: flex; flex-direction: column; gap: 16px; }
+.goal-group { --c: var(--muted); border-radius: var(--r-lg); padding: 18px; background: color-mix(in srgb, var(--c) 8%, var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 25%, var(--line)); display: flex; flex-direction: column; gap: 14px; }
+.goal-group.orphan { border-style: dashed; background: transparent; }
+.goal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.goal-main { display: flex; flex-direction: column; gap: 6px; min-width: 0; flex: 1 1 280px; }
+.goal-main h3 { font-size: 1.3rem; }
+.goal-main .desc { color: var(--muted); margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.goal-group .add-card { min-height: 100px; background: var(--surface); }
+.add-goal { min-height: 80px; }
 .card.district {
   border: 2px solid var(--dist);
   background:
@@ -444,14 +453,14 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
   var NEEDS = ['שעות פרטניות', 'זמן בישיבת צוות', 'הדרכה / השתלמות', 'חומרי למידה', 'תקציב', 'החלטת הנהלה', 'שינוי במערכת השעות', 'עזרה טכנולוגית'];
   // מודל חוויה: חקר, ארגון, יצירה, הצגה
   var STAGES = [
-    { id: 'research', name: 'חקר', icon: 'search', color: 'var(--h1)', short: 'שואלות ומחפשות',
-      text: 'הלמידה מתחילה בשאלה של התלמידות. הן חוקרות, אוספות מידע ומגלות בעצמן.' },
+    { id: 'research', name: 'חקר', icon: 'search', color: 'var(--h1)', short: 'סקרנות שמובילה לחקר',
+      text: 'הלמידה מתחילה בסקרנות של התלמידות. הן חוקרות, אוספות מידע ומגלות בעצמן.' },
     { id: 'organize', name: 'ארגון', icon: 'users', color: 'var(--h2)', short: 'עובדות יחד',
       text: 'עבודה בקבוצות: חלוקת תפקידים, שיתוף פעולה וניהול זמן.' },
     { id: 'create', name: 'יצירה', icon: 'brush', color: 'var(--h3)', short: 'יוצרות תוצר',
       text: 'התלמידות פעלניות: הופכות את מה שגילו לתוצר משלהן.' },
     { id: 'present', name: 'הצגה', icon: 'easel', color: 'var(--h4)', short: 'מציגות לאחרות',
-      text: 'מציגות לפני הכיתה, בדרך שמתאימה לכל אחת: הרצאה, דגם, ערכה, המחזה.' }
+      text: 'מציגות לפני הכיתה: נואם צעיר, ביטוי ויזואלי, למידת עמיתים, ועוד מגוון דרכי הצגה שמתאימות לשונות הלומדות.' }
   ];
   var PARTNERS_BASE = ['מנהלת', 'מחנכות', 'יועצת', 'רכזת פדגוגית', 'מדריכה', 'הורים', 'תלמידות'];
 
@@ -502,7 +511,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
 
   // ---------- data layer ----------
   var IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
-  var DEMO_KEY = 'tzmatim-demo-v3';
+  var DEMO_KEY = 'tzmatim-demo-v4';
 
   function gas(fn) {
     var args = Array.prototype.slice.call(arguments, 1);
@@ -545,13 +554,14 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       goals: [
         { id: 'g1', coord: 'math', kind: 'subject', title: 'הטמעת תוכנית הלימודים החדשה במתמטיקה', desc: 'היכרות של כל הצוות עם התוכנית ומעבר הדרגתי לפרקים החדשים.' },
         { id: 'g2', coord: 'kodesh', kind: 'curiosity', title: 'תלמידות שואלות שאלות על הפרשה', desc: 'לפתח שאלת חקר אישית בכל פרשה.' },
-        { id: 'g3', coord: 'hebrew', kind: 'skills', title: 'כתיבה טיעונית בשכבות הבוגרות', desc: '' }
+        { id: 'g3', coord: 'hebrew', kind: 'skills', title: 'כתיבה טיעונית בשכבות הבוגרות', desc: '' },
+        { id: 'g4', coord: 'english', kind: 'curiosity', title: 'תלמידות סקרניות לשפה', desc: 'להפוך את שיעור האנגלית למקום שבו שואלים ומגלים.' }
       ],
       actions: [
         { id: 'a1', coord: 'math', title: 'פינת "מה היה קורה אילו" בשיעור', desc: 'פעם בשבוע שאלה פתוחה שאין לה פתרון אחד.', goals: ['g1'], tags: ['curiosity', 'subject'], chavaya: 'short', stages: ['research', 'organize', 'present'], grades: ['ה', 'ו'], teachers: ['יוכי', 'מלכי'], partners: ['מחנכות'], from: 'חשון', to: 'אדר ב׳', regularity: 'פעם בשבוע', needs: ['זמן בישיבת צוות'], needsOther: '', success: 'בכל כיתה נאספו 10 שאלות של תלמידות', status: 'active', reflection: '' },
         { id: 'a2', coord: 'kodesh', title: 'יומן חוקרת לפרשת השבוע', desc: '', goals: ['g2'], tags: ['curiosity'], chavaya: 'long', stages: ['research', 'organize', 'create', 'present'], grades: ['ה'], teachers: ['רחלי'], partners: ['הורים'], from: 'תשרי', to: 'שבט', regularity: 'פעם בשבוע', needs: ['חומרי למידה'], needsOther: '', success: '', status: 'planned', reflection: '' },
         { id: 'a3', coord: 'hebrew', title: 'שיעור מיומנות: לנמק ולהכריע', desc: 'מיומנות אחת בחודש, עם שפה משותפת לכל הכיתות.', goals: ['g3'], tags: ['skills'], grades: ['ז', 'ח'], teachers: ['חוי'], partners: ['רכזת פדגוגית'], from: 'כסלו', to: 'ניסן', regularity: 'פעם בחודש', needs: ['הדרכה / השתלמות'], needsOther: '', success: '', status: 'planned', reflection: '' },
-        { id: 'a4', coord: 'english', title: 'Question of the week', desc: 'שאלה באנגלית שהתלמידות חוקרות במשך שבוע.', goals: [], tags: ['curiosity'], grades: ['ה', 'ו'], teachers: ['ליבי'], partners: [], from: 'כסלו', to: 'טבת', regularity: 'פעם בשבוע', needs: [], needsOther: '', success: '', status: 'stuck', reflection: 'קשה למצוא זמן בשיעור אחרי המבחנים.' }
+        { id: 'a4', coord: 'english', title: 'Question of the week', desc: 'שאלה באנגלית שהתלמידות חוקרות במשך שבוע.', goals: ['g4'], tags: ['curiosity'], grades: ['ה', 'ו'], teachers: ['ליבי'], partners: [], from: 'כסלו', to: 'טבת', regularity: 'פעם בשבוע', needs: [], needsOther: '', success: '', status: 'stuck', reflection: 'קשה למצוא זמן בשיעור אחרי המבחנים.' }
       ],
       district: [
         { id: 'dist_math', coord: 'math', expression: 'פתרון בעיות מילוליות עם "שואלים – בודקים – מנמקים – מכריעים".', teachers: ['בתיה'], from: 'חשון', to: 'סיון', status: 'active', reflection: '' }
@@ -622,11 +632,11 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     }).join('') + '</ol>';
     if (compact) return steps;
     return '<div class="chv"><div class="chv-head"><span class="chv-word">חוויה</span>' +
-      '<p><b>חקר, ארגון, יצירה והצגה.</b> המודל שלנו ללמידה מבוססת סקרנות וחקרנות, שצמח מתוך יסודי עכשווי. מעגל למידה שמתחיל בשאלה של התלמידות ונגמר בתוצר שהן מציגות.</p></div>' +
+      '<p><b>חקר, ארגון, יצירה והצגה.</b> המודל שלנו ללמידה מבוססת סקרנות וחקרנות, שצמח מתוך יסודי עכשווי. מעגל למידה שמתחיל בסקרנות של התלמידות ונגמר בתוצר שהן מציגות.</p></div>' +
       steps +
       '<div class="chv-modes"><div><b>התנסות ארוכה</b>תהליך לאורך תקופה או שנה: חקר ארוך, ואחריו יצירה והצגה.</div>' +
       '<div><b>התנסות קצרה</b>שיעור או יחידת הוראה אחת שכל המעגל נמצא בתוכה.</div></div>' +
-      '<p class="chv-teacher">המורה לא מרצה והתלמידות לא רק כותבות במחברת. הלמידה נובעת מהחקר, והמורה מלווה אותן לאורך הדרך.</p></div>';
+      '<p class="chv-teacher"><b>הטריגר הוא סקרנות.</b> הלמידה נובעת מהחקר, והמורה מלווה לאורך הדרך.</p></div>';
   }
   function hasChavaya(a) { return a.chavaya === 'long' || a.chavaya === 'short'; }
 
@@ -655,18 +665,19 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       }).join('') +
       '<form class="add-person" data-form="teacher"><input type="text" id="newTeacher" placeholder="+ הוסיפי מורה" aria-label="שם מורה להוספה" maxlength="40"></form></div>';
 
-    h += '<div class="section-title"><h2>היעדים שלי</h2><span class="hint">יעדים כלליים: בתחום הדעת וגם יעדים בית ספריים. את השכבות והשותפות מפרטים בפעולות.</span></div><div class="cards">' +
-      goals.map(goalCard).join('') +
-      '<button class="add-card" data-act="new-goal"><span>' + icon('plus') + 'יעד חדש</span></button></div>';
+    var goalIds = goals.map(function (g) { return g.id; });
+    var orphans = acts.filter(function (a) { return !(a.goals || []).some(function (id) { return goalIds.indexOf(id) > -1; }); });
+    h += '<div class="section-title"><h2>היעדים והפעולות שלי</h2><span class="hint">קודם יעד, ואז הפעולות שמקדמות אותו. לפחות פעולה אחת לסקרנות וחקרנות ולפחות אחת להוראת מיומנויות.</span></div>' +
+      '<div class="goal-list">' + goals.map(function (g) { return goalGroup(g, acts); }).join('') +
+      (orphans.length ? '<section class="goal-group orphan"><header class="goal-head"><div class="goal-main"><h3>פעולות שעוד לא שויכו ליעד</h3>' +
+        '<p class="desc">לחצי על פעולה ובחרי לאיזה יעד היא שייכת.</p></div></header><div class="cards">' +
+        orphans.map(function (a) { return actionCard(a, true); }).join('') + '</div></section>' : '') +
+      '<button class="add-card add-goal" data-act="new-goal"><span>' + icon('plus') + (goals.length ? 'יעד נוסף' : 'מתחילים כאן: היעד הראשון שלי') + '</span></button></div>';
 
     h += '<div class="section-title"><h2>המהלך המחוזי · כיתות ה׳</h2><span class="hint">כבר חלק מהתוכנית של כולן. ספרי איך זה נראה אצלך.</span></div><div class="cards">' +
       districtCard(d, true) + '</div>';
 
-    var chvOpen = !acts.some(hasChavaya);
-    h += '<details class="chv-details"' + (chvOpen ? ' open' : '') + '><summary><span class="chv-word" style="font-size:1.4rem">חוויה</span>תזכורת: מה זה מודל חוויה<span class="chv-tag">לחצי לפתיחה</span></summary>' + chavayaStrip() + '</details>';
-    h += '<div class="section-title"><h2>הפעולות שלי</h2><span class="hint">לפחות פעולה אחת לסקרנות וחקרנות (כדאי לפי מודל חוויה) ולפחות אחת להוראת מיומנויות.</span></div><div class="cards">' +
-      acts.map(function (a) { return actionCard(a, true); }).join('') +
-      '<button class="add-card" data-act="new-action"><span>' + icon('plus') + 'פעולה חדשה</span></button></div>';
+    h += '<details class="chv-details"><summary><span class="chv-word" style="font-size:1.4rem">חוויה</span>תזכורת: מה זה מודל חוויה<span class="chv-tag">לחצי לפתיחה</span></summary>' + chavayaStrip() + '</details>';
     return h;
   }
 
@@ -682,22 +693,23 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
   }
   function peopleText(arr) { return (arr || []).map(esc).join(', '); }
 
-  function goalCard(g) {
+  function goalGroup(g, acts) {
     var c = coord(g.coord);
-    var kindTag = g.kind ? tagPills([g.kind], c) : '';
-    return '<article class="card clickable" data-act="edit-goal" data-id="' + esc(g.id) + '" tabindex="0">' +
-      '<div class="row">' + kindTag + '</div>' +
-      '<h3>' + esc(g.title) + '</h3>' + (g.desc ? '<p class="desc">' + esc(g.desc) + '</p>' : '') +
-      '</article>';
+    var mine = acts.filter(function (a) { return (a.goals || []).indexOf(g.id) > -1; });
+    return '<section class="goal-group" style="--c:' + c.color + '">' +
+      '<header class="goal-head"><div class="goal-main"><span class="kind">יעד</span><div class="row">' + (g.kind ? tagPills([g.kind], c) : '') + '</div>' +
+      '<h3>' + esc(g.title) + '</h3>' + (g.desc ? '<p class="desc">' + esc(g.desc) + '</p>' : '') + '</div>' +
+      '<button class="btn ghost small" data-act="edit-goal" data-id="' + esc(g.id) + '">' + icon('pencil') + 'עריכת היעד</button></header>' +
+      '<div class="cards">' + mine.map(function (a) { return actionCard(a, true, false, true); }).join('') +
+      '<button class="add-card" data-act="new-action" data-goal="' + esc(g.id) + '"><span>' + icon('plus') + (mine.length ? 'עוד פעולה ליעד הזה' : 'פעולה ראשונה ליעד הזה') + '</span></button></div></section>';
   }
-
   function chvPill(a) {
     if (!hasChavaya(a)) return '';
     var dots = STAGES.filter(function (s) { return (a.stages || []).indexOf(s.id) > -1; })
       .map(function (s) { return '<i style="background:' + s.color + '" title="' + s.name + '"></i>'; }).join('');
     return '<span class="pill chv-pill">חוויה · ' + (a.chavaya === 'long' ? 'ארוכה' : 'קצרה') + dots + '</span>';
   }
-  function actionCard(a, editable, showOwner) {
+  function actionCard(a, editable, showOwner, hideGoal) {
     var c = coord(a.coord);
     var goalNames = (a.goals || []).map(function (id) {
       var g = state.data.goals.filter(function (x) { return x.id === id; })[0]; return g ? esc(g.title) : '';
@@ -709,7 +721,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       '<h3>' + esc(a.title) + '</h3>' + (a.desc ? '<p class="desc">' + esc(a.desc) + '</p>' : '') +
       '<dl class="facts">' +
       (showOwner ? '<dt>רכזת</dt><dd>' + c.name + '</dd>' : '') +
-      (goalNames ? '<dt>מקדמת</dt><dd>' + goalNames + '</dd>' : '') +
+      (goalNames && !hideGoal ? '<dt>יעד</dt><dd>' + goalNames + '</dd>' : '') +
       (a.teachers && a.teachers.length ? '<dt>מורות</dt><dd>' + peopleText(a.teachers) + '</dd>' : '') +
       (a.partners && a.partners.length ? '<dt>שותפים</dt><dd>' + peopleText(a.partners) + '</dd>' : '') +
       (a.regularity ? '<dt>סדירות</dt><dd>' + esc(a.regularity) + '</dd>' : '') +
@@ -984,9 +996,9 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     modalRoot._type = 'goals';
   }
 
-  function editAction(a) {
+  function editAction(a, goalId) {
     var cid = state.coord, c = coord(cid), isNew = !a;
-    a = a || { id: uid('a'), coord: cid, title: '', desc: '', goals: [], tags: [], grades: [], teachers: [], partners: [], from: '', to: '', regularity: '', needs: [], needsOther: '', success: '', status: 'planned', reflection: '' };
+    a = a || { id: uid('a'), coord: cid, title: '', desc: '', goals: goalId ? [goalId] : [], tags: [], grades: [], teachers: [], partners: [], from: '', to: '', regularity: '', needs: [], needsOther: '', success: '', status: 'planned', reflection: '' };
     var goals = goalsOf(cid);
     var partners = PARTNERS_BASE.concat(COORDS.filter(function (x) { return x.id !== cid; }).map(function (x) { return 'רכזת ' + x.name; }));
     (a.partners || []).forEach(function (p) { if (partners.indexOf(p) < 0) partners.push(p); });
@@ -1006,7 +1018,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       '<span class="lbl">אילו שלבים יש בה?</span>' + chipGroup('stages', STAGES.map(function (s) {
         return { value: s.id, label: icon(s.icon) + s.name, cls: 'big t-stage', style: '--s:' + s.color };
       }), a.stages) + '</div>' +
-      (goals.length ? '<div class="field"><span class="lbl">לאיזה יעד היא שייכת?</span>' + chipGroup('goals', goals.map(function (g) { return { value: g.id, label: esc(g.title) }; }), a.goals) + '</div>' : '') +
+      '<div class="field"><span class="lbl">לאיזה יעד הפעולה שייכת?</span>' + chipGroup('goals', goals.map(function (g) { return { value: g.id, label: esc(g.title) }; }), a.goals, { single: true }) + '</div>' +
       gradeField(a.grades) + teacherField(cid, a.teachers, 'אילו מורות מהצוות שותפות') +
       '<div class="field"><span class="lbl">שותפים נוספים</span>' + chipGroup('partners', partners, a.partners) + '</div>' +
       monthFields(a) +
@@ -1026,6 +1038,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       o.chavaya = o.tags.indexOf('curiosity') > -1 ? (readChips(form, 'chv')[0] || '') : '';
       o.stages = hasChavaya(o) ? readChips(form, 'stages') : [];
       if (!o.title) return formErr('תני שם לפעולה.');
+      if (!o.goals.length) return formErr('בחרי לאיזה יעד הפעולה שייכת.');
       if (!o.tags.length) return formErr('סמני מה הפעולה מקדמת.');
       if (!o.grades.length) return formErr('בחרי שכבה אחת לפחות, או "כל השכבות".');
       return o;
@@ -1119,7 +1132,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
         var t = team(state.coord).slice(); t.splice(+el.getAttribute('data-i'), 1); saveTeam(state.coord, t); break;
       case 'new-goal': editGoal(null); break;
       case 'edit-goal': editGoal(state.data.goals.filter(function (x) { return x.id === id; })[0]); break;
-      case 'new-action': editAction(null); break;
+      case 'new-action': editAction(null, el.getAttribute('data-goal')); break;
       case 'edit-action': editAction(state.data.actions.filter(function (x) { return x.id === id; })[0]); break;
       case 'edit-district': editDistrict(); break;
       case 'mode': state.boardMode = el.getAttribute('data-mode'); render(); break;
