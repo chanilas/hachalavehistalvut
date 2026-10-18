@@ -1,0 +1,1090 @@
+<title>צמתים</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Assistant:wght@400;600;700&display=swap">
+<style>
+/* Layout: playful planning board – a colorful header with four subject dots meeting in a "junction", tabs, then roomy cards per coordinator. */
+:root {
+  --bg: #F6F5FF;
+  --surface: #FFFFFF;
+  --ink: #2B2550;
+  --muted: #6E6890;
+  --line: #E4E1F4;
+  --soft: #EEECFB;
+
+  --kodesh: #F2A31B;
+  --hebrew: #EC4F86;
+  --english: #4F86EE;
+  --math: #1FAE78;
+
+  --cur: #FF7A3D;
+  --skl: #8C5CF0;
+  --dist: #2B2550;
+
+  --ok: #1FAE78;
+  --warn: #F2A31B;
+  --bad: #E5484D;
+
+  --display: "Fredoka", "Assistant", "Arial Hebrew", system-ui, sans-serif;
+  --body: "Assistant", "Arial Hebrew", system-ui, sans-serif;
+
+  --r-lg: 22px;
+  --r-md: 14px;
+  --r-sm: 10px;
+  --shadow: 0 1px 0 rgba(43,37,80,.04), 0 8px 24px -12px rgba(43,37,80,.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15132A; --surface: #211E3C; --ink: #F2F0FF; --muted: #ABA6CF; --line: #36325C; --soft: #2A2649;
+    --kodesh: #F7B544; --hebrew: #F46C9C; --english: #6E9CF5; --math: #3CC690;
+    --cur: #FF9058; --skl: #A27DF7; --dist: #CFCAF5;
+    --shadow: 0 1px 0 rgba(0,0,0,.2), 0 10px 28px -12px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15132A; --surface: #211E3C; --ink: #F2F0FF; --muted: #ABA6CF; --line: #36325C; --soft: #2A2649;
+  --kodesh: #F7B544; --hebrew: #F46C9C; --english: #6E9CF5; --math: #3CC690;
+  --cur: #FF9058; --skl: #A27DF7; --dist: #CFCAF5;
+  --shadow: 0 1px 0 rgba(0,0,0,.2), 0 10px 28px -12px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-size: 16px; line-height: 1.55; direction: rtl;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--skl) 60%, transparent); outline-offset: 2px; border-radius: 8px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; margin: 0; text-wrap: balance; line-height: 1.2; }
+
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- header ---------- */
+.hero { padding-block: 28px 8px; }
+.hero-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.logo { width: 64px; height: 64px; flex: none; }
+.brand h1 { font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 700; letter-spacing: -.5px; }
+.brand p { margin: 2px 0 0; color: var(--muted); font-size: 1.02rem; }
+.anchors { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.anchor {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line); font-weight: 600; font-size: .95rem;
+}
+.anchor .ic { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; color: #fff; flex: none; }
+.anchor .ic svg { width: 16px; height: 16px; }
+.demo-note {
+  margin-top: 14px; padding: 10px 14px; border-radius: var(--r-md); font-size: .92rem;
+  background: color-mix(in srgb, var(--kodesh) 16%, var(--surface)); border: 1px dashed var(--kodesh);
+}
+
+/* ---------- tabs ---------- */
+.tabs {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  padding-block: 14px 10px; margin-top: 10px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.tabbar { display: flex; gap: 6px; padding: 5px; background: var(--soft); border-radius: 999px; width: max-content; max-width: 100%; overflow-x: auto; }
+.tab {
+  border: 0; background: transparent; padding: 9px 18px; border-radius: 999px; font-weight: 700;
+  color: var(--muted); white-space: nowrap; display: flex; align-items: center; gap: 8px;
+}
+.tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.tab svg { width: 16px; height: 16px; }
+.sync { font-size: .82rem; color: var(--muted); margin-inline-start: auto; }
+.tabs .wrap { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+main { padding-block: 10px 60px; }
+.section-title { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 30px 0 12px; }
+.section-title h2 { font-size: 1.45rem; }
+.section-title .hint { color: var(--muted); font-size: .93rem; }
+
+/* ---------- coordinator picker ---------- */
+.pick-intro { font-size: 1.1rem; color: var(--muted); margin: 18px 0 14px; }
+.coord-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.coord-card {
+  --c: var(--ink);
+  text-align: start; border: 0; border-radius: var(--r-lg); padding: 20px 20px 18px; min-height: 150px;
+  background: color-mix(in srgb, var(--c) 14%, var(--surface)); color: var(--ink);
+  display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.coord-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+.coord-card .blob { position: absolute; inset-inline-end: -28px; top: -28px; width: 110px; height: 110px; border-radius: 50%; background: var(--c); opacity: .9; }
+.coord-card h3 { font-size: 1.5rem; position: relative; }
+.coord-card .meta { color: var(--muted); font-size: .92rem; position: relative; }
+.coord-card .mini-req { display: flex; gap: 6px; margin-top: auto; position: relative; flex-wrap: wrap; }
+
+/* ---------- requirement chips ---------- */
+.req { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 12px; border-radius: 999px; font-size: .82rem; font-weight: 700; background: var(--surface); border: 1px solid var(--line); color: var(--muted); }
+.req .dot { width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center; background: var(--line); color: var(--surface); }
+.req .dot svg { width: 10px; height: 10px; }
+.req.done { color: var(--ink); border-color: color-mix(in srgb, var(--ok) 45%, var(--line)); }
+.req.done .dot { background: var(--ok); }
+
+/* ---------- my plan ---------- */
+.plan-head {
+  --c: var(--ink);
+  margin-top: 16px; border-radius: var(--r-lg); padding: 22px; background: color-mix(in srgb, var(--c) 15%, var(--surface));
+  display: flex; flex-wrap: wrap; gap: 18px; align-items: center; justify-content: space-between; position: relative; overflow: hidden;
+}
+.plan-head .who { display: flex; align-items: center; gap: 14px; }
+.plan-head .badge { width: 56px; height: 56px; border-radius: 18px; background: var(--c); color: #fff; display: grid; place-items: center; font-family: var(--display); font-size: 1.6rem; font-weight: 700; flex: none; }
+.plan-head h2 { font-size: 1.8rem; }
+.plan-head .switch { background: none; border: 0; color: var(--muted); text-decoration: underline; padding: 0; font-size: .92rem; }
+.meter { display: flex; flex-wrap: wrap; gap: 8px; }
+.meter .req { font-size: .9rem; padding: 6px 12px 6px 14px; }
+
+.team { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.person { display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-weight: 600; }
+.person button { border: 0; background: var(--soft); width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: var(--muted); padding: 0; }
+.person button svg { width: 10px; height: 10px; }
+.add-person { display: inline-flex; gap: 6px; }
+.add-person input { border: 1px dashed var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; width: 170px; max-width: 100%; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 18px;
+  display: flex; flex-direction: column; gap: 10px; min-width: 0; position: relative;
+}
+.card h3 { font-size: 1.12rem; }
+.card .desc { color: var(--muted); font-size: .95rem; margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.card .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.card .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 6px; flex-wrap: wrap; }
+.card .facts { display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: .9rem; margin: 0; }
+.card .facts dt { color: var(--muted); }
+.card .facts dd { margin: 0; overflow-wrap: anywhere; }
+.card .owner { position: absolute; top: 14px; inset-inline-end: 14px; width: 12px; height: 12px; border-radius: 50%; }
+.card.clickable { cursor: pointer; transition: box-shadow .15s, transform .15s; }
+.card.clickable:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+
+.card.district {
+  border: 2px solid var(--dist);
+  background:
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--dist) 14%, transparent) 1px, transparent 1.5px) 0 0 / 14px 14px,
+    var(--surface);
+}
+.lock { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; font-weight: 700; color: var(--dist); text-transform: none; letter-spacing: .3px; }
+.lock svg { width: 13px; height: 13px; }
+
+.add-card {
+  border: 2px dashed var(--line); background: transparent; border-radius: var(--r-lg); min-height: 120px;
+  display: grid; place-items: center; color: var(--muted); font-weight: 700; font-size: 1rem; padding: 18px;
+}
+.add-card:hover { border-color: var(--skl); color: var(--ink); }
+.add-card span { display: flex; align-items: center; gap: 8px; }
+.add-card svg { width: 20px; height: 20px; }
+
+/* ---------- pills ---------- */
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+.pill svg { width: 12px; height: 12px; }
+.pill.tag-curiosity { background: color-mix(in srgb, var(--cur) 18%, var(--surface)); color: color-mix(in srgb, var(--cur) 75%, var(--ink)); }
+.pill.tag-skills { background: color-mix(in srgb, var(--skl) 18%, var(--surface)); color: color-mix(in srgb, var(--skl) 75%, var(--ink)); }
+.pill.tag-subject { background: color-mix(in srgb, var(--c, var(--muted)) 18%, var(--surface)); color: color-mix(in srgb, var(--c, var(--muted)) 70%, var(--ink)); }
+.pill.grade { background: var(--soft); color: var(--ink); }
+.pill.st-planned { background: var(--soft); color: var(--muted); }
+.pill.st-active { background: color-mix(in srgb, var(--english) 18%, var(--surface)); color: color-mix(in srgb, var(--english) 70%, var(--ink)); }
+.pill.st-done { background: color-mix(in srgb, var(--ok) 20%, var(--surface)); color: color-mix(in srgb, var(--ok) 65%, var(--ink)); }
+.pill.st-stuck { background: color-mix(in srgb, var(--bad) 16%, var(--surface)); color: color-mix(in srgb, var(--bad) 75%, var(--ink)); }
+.pill.when { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+
+/* ---------- buttons ---------- */
+.btn { border: 0; border-radius: 999px; padding: 10px 20px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; }
+.btn svg { width: 16px; height: 16px; }
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.ghost { background: transparent; border: 1px solid var(--line); }
+.btn.danger { background: transparent; color: var(--bad); }
+.btn.small { padding: 6px 14px; font-size: .88rem; }
+.btn:disabled { opacity: .5; cursor: default; }
+
+/* ---------- board ---------- */
+.seg { display: inline-flex; gap: 4px; padding: 4px; background: var(--soft); border-radius: 999px; }
+.seg button { border: 0; background: transparent; padding: 7px 16px; border-radius: 999px; font-weight: 700; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.grade-pick { display: flex; gap: 8px; flex-wrap: wrap; margin: 18px 0 6px; }
+.grade-btn {
+  width: 52px; height: 52px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface);
+  font-family: var(--display); font-size: 1.35rem; font-weight: 600; display: grid; place-items: center; position: relative;
+}
+.grade-btn[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.grade-btn .n { position: absolute; top: -6px; inset-inline-start: -6px; min-width: 20px; height: 20px; border-radius: 999px; background: var(--cur); color: #fff; font-family: var(--body); font-size: .72rem; font-weight: 700; display: grid; place-items: center; padding: 0 5px; }
+.lanes { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 14px; }
+.lane { --c: var(--ink); border-radius: var(--r-lg); background: color-mix(in srgb, var(--c) 10%, var(--surface)); padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.lane > header { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 600; font-size: 1.1rem; }
+.lane > header i { width: 12px; height: 12px; border-radius: 50%; background: var(--c); }
+.lane .card { padding: 14px; gap: 8px; border-radius: var(--r-md); }
+.lane .card h3 { font-size: 1rem; }
+.lane .empty { color: var(--muted); font-size: .9rem; padding: 6px 2px; }
+.kind { font-size: .75rem; font-weight: 700; color: var(--muted); letter-spacing: .3px; }
+
+.timeline-scroll { overflow-x: auto; margin-top: 16px; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); }
+.timeline { display: grid; grid-template-columns: 120px repeat(12, minmax(78px, 1fr)); min-width: 1060px; }
+.timeline .mh { font-family: var(--display); font-weight: 600; font-size: .9rem; text-align: center; padding: 12px 4px; border-bottom: 1px solid var(--line); color: var(--muted); }
+.timeline .mh.adar { color: var(--ink); }
+.timeline .lh { padding: 12px; font-family: var(--display); font-weight: 600; display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--line); position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 1; }
+.timeline .lh i { width: 12px; height: 12px; border-radius: 50%; }
+.timeline .track { grid-column: 2 / -1; display: grid; grid-template-columns: repeat(12, minmax(78px, 1fr)); grid-auto-rows: minmax(34px, auto); gap: 6px 0; padding-block: 10px; border-top: 1px solid var(--line);
+  background-image: linear-gradient(to left, var(--line) 1px, transparent 1px); background-size: calc(100% / 12) 100%; }
+.bar { margin: 0 3px; border-radius: 10px; padding: 5px 10px; font-size: .84rem; font-weight: 700; color: #fff; border: 0; text-align: start; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 6px; }
+.bar.district { background: var(--dist); color: var(--bg); }
+.bar .tg { width: 8px; height: 8px; border-radius: 50%; background: #fff; flex: none; }
+.bar .tg.cur { background: var(--cur); box-shadow: 0 0 0 2px #fff; }
+.bar .tg.skl { background: var(--skl); box-shadow: 0 0 0 2px #fff; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; color: var(--muted); font-size: .86rem; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+.links { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.link-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.link-card .pair { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; }
+.link-card .side { --c: var(--ink); background: color-mix(in srgb, var(--c) 12%, var(--surface)); border-radius: var(--r-md); padding: 10px; min-width: 0; }
+.link-card .side b { display: block; font-size: .78rem; color: color-mix(in srgb, var(--c) 70%, var(--ink)); }
+.link-card .side span { font-weight: 700; font-size: .95rem; overflow-wrap: anywhere; }
+.link-card .knot { width: 30px; height: 30px; border-radius: 50%; background: var(--soft); display: grid; place-items: center; color: var(--muted); }
+.link-card .knot svg { width: 16px; height: 16px; }
+.link-card .why { font-size: .9rem; color: var(--muted); }
+
+/* ---------- admin ---------- */
+.gate { max-width: 420px; margin: 40px auto; background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--line); padding: 26px; display: flex; flex-direction: column; gap: 14px; text-align: center; }
+.gate input { text-align: center; font-size: 1.3rem; letter-spacing: 6px; padding: 10px; border-radius: var(--r-md); border: 1px solid var(--line); background: var(--bg); }
+.gate .err { color: var(--bad); font-size: .9rem; min-height: 1.2em; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; }
+.stat b { display: block; font-family: var(--display); font-size: 2rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat span { color: var(--muted); font-size: .9rem; }
+.table-scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: .93rem; }
+th, td { text-align: start; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 700; color: var(--muted); font-size: .84rem; background: var(--soft); }
+tr:last-child td { border-bottom: 0; }
+td.num { font-variant-numeric: tabular-nums; text-align: center; }
+.yes { color: var(--ok); font-weight: 700; }
+.no { color: var(--bad); font-weight: 700; }
+.needs { display: flex; flex-direction: column; gap: 8px; }
+.need-row { display: grid; grid-template-columns: 160px 1fr 34px; gap: 10px; align-items: center; font-size: .93rem; }
+.need-row .track2 { height: 12px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.need-row .fill { height: 100%; border-radius: 999px; background: var(--skl); }
+.need-row b { font-variant-numeric: tabular-nums; text-align: center; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 18px; }
+.list-plain { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.list-plain li { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+
+/* ---------- modal ---------- */
+.overlay { position: fixed; inset: 0; background: color-mix(in srgb, #0D0B1E 55%, transparent); z-index: 20; display: grid; place-items: center; padding: 16px; }
+.modal {
+  background: var(--surface); border-radius: 26px; width: min(760px, 100%); max-height: calc(100% - 24px); overflow: auto;
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,.45);
+}
+.modal header { position: sticky; top: 0; background: var(--surface); padding: 20px 22px 12px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 10px; z-index: 1; }
+.modal header h2 { font-size: 1.35rem; }
+.modal .x { border: 0; background: var(--soft); width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; }
+.modal .x svg { width: 14px; height: 14px; }
+.modal form { padding: 18px 22px 8px; display: flex; flex-direction: column; gap: 18px; }
+.modal footer { position: sticky; bottom: 0; background: var(--surface); padding: 12px 22px 18px; border-top: 1px solid var(--line); display: flex; gap: 10px; justify-content: space-between; flex-wrap: wrap; }
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field > label, .field > .lbl { font-weight: 700; font-size: .95rem; }
+.field .sub { color: var(--muted); font-weight: 400; font-size: .86rem; }
+.field input[type="text"], .field textarea, .field select {
+  border: 1px solid var(--line); background: var(--bg); border-radius: var(--r-md); padding: 10px 12px; width: 100%;
+}
+.field textarea { min-height: 76px; resize: vertical; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: .92rem;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip.big { padding: 10px 16px; border-radius: var(--r-md); text-align: start; }
+.chip.big[aria-pressed="true"].t-curiosity { background: var(--cur); border-color: var(--cur); color: #fff; }
+.chip.big[aria-pressed="true"].t-skills { background: var(--skl); border-color: var(--skl); color: #fff; }
+.chip.big[aria-pressed="true"].t-subject { background: var(--c); border-color: var(--c); color: #fff; }
+.chip.big svg { width: 16px; height: 16px; }
+.chip.grade-chip { width: 42px; justify-content: center; padding: 6px 0; font-family: var(--display); font-size: 1rem; }
+.chip.all { padding-inline: 16px; }
+.form-err { color: var(--bad); font-weight: 700; font-size: .92rem; min-height: 1.2em; }
+.note-locked { font-size: .9rem; color: var(--muted); background: var(--soft); padding: 10px 14px; border-radius: var(--r-md); }
+
+.toast { position: fixed; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 20px; border-radius: 999px; font-weight: 700; z-index: 30; box-shadow: var(--shadow); }
+
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.empty-state { text-align: center; padding: 30px 16px; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: var(--r-lg); }
+
+@media (max-width: 640px) {
+  .two { grid-template-columns: 1fr; }
+  .link-card .pair { grid-template-columns: 1fr; }
+  .link-card .knot { justify-self: center; }
+  .need-row { grid-template-columns: 110px 1fr 30px; }
+  .plan-head h2 { font-size: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-row">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+        <g stroke="var(--line)" stroke-width="4" stroke-linecap="round">
+          <line x1="32" y1="32" x2="12" y2="12"/><line x1="32" y1="32" x2="52" y2="12"/>
+          <line x1="32" y1="32" x2="12" y2="52"/><line x1="32" y1="32" x2="52" y2="52"/>
+        </g>
+        <circle cx="12" cy="12" r="9" fill="var(--kodesh)"/><circle cx="52" cy="12" r="9" fill="var(--hebrew)"/>
+        <circle cx="12" cy="52" r="9" fill="var(--english)"/><circle cx="52" cy="52" r="9" fill="var(--math)"/>
+        <circle cx="32" cy="32" r="8" fill="var(--ink)"/>
+      </svg>
+      <div class="brand">
+        <h1>צמתים</h1>
+        <p>תוכנית העבודה השנתית של רכזות המקצועות · תשפ״ז</p>
+      </div>
+    </div>
+    <div class="anchors" aria-label="המוקדים של בית הספר השנה">
+      <div class="anchor"><span class="ic" style="background:var(--cur)" data-icon="spark"></span>למידה מבוססת סקרנות וחקרנות</div>
+      <div class="anchor"><span class="ic" style="background:var(--skl)" data-icon="puzzle"></span>הוראה מבוססת מיומנויות</div>
+      <div class="anchor"><span class="ic" style="background:var(--dist)" data-icon="lock"></span>המהלך המחוזי למיומנויות · כיתות ה׳</div>
+    </div>
+    <div class="demo-note" id="demoNote" hidden>
+      זו תצוגה לדוגמה. היוזמות והשמות שמופיעים כאן הומצאו להמחשה, ומה שתכתבי כאן נשמר רק בדפדפן שלך. בגרסה המחוברת הכול נשמר בגיליון ומשותף לכל הרכזות.
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="ניווט">
+  <div class="wrap">
+    <div class="tabbar" role="tablist">
+      <button class="tab" role="tab" id="tab-mine" data-view="mine"><span data-icon="pencil"></span>התוכנית שלי</button>
+      <button class="tab" role="tab" id="tab-board" data-view="board"><span data-icon="grid"></span>הלוח המשותף</button>
+      <button class="tab" role="tab" id="tab-links" data-view="links"><span data-icon="link"></span>חיבורים</button>
+      <button class="tab" role="tab" id="tab-admin" data-view="admin"><span data-icon="lock"></span>מבט ניהולי</button>
+    </div>
+    <span class="sync" id="sync"></span>
+  </div>
+</nav>
+
+<main class="wrap" id="main" aria-live="polite"></main>
+<div id="modalRoot"></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- constants ----------
+  var COORDS = [
+    { id: 'kodesh',  name: 'קודש',     color: 'var(--kodesh)',  letter: 'ק' },
+    { id: 'hebrew',  name: 'עברית',    color: 'var(--hebrew)',  letter: 'ע' },
+    { id: 'english', name: 'אנגלית',   color: 'var(--english)', letter: 'E' },
+    { id: 'math',    name: 'מתמטיקה',  color: 'var(--math)',    letter: 'מ' }
+  ];
+  var GRADES = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח'];
+  // תשפ"ז היא שנה מעוברת – יש אדר א׳ ואדר ב׳
+  var MONTHS = ['אלול', 'תשרי', 'חשון', 'כסלו', 'טבת', 'שבט', 'אדר א׳', 'אדר ב׳', 'ניסן', 'אייר', 'סיון', 'תמוז'];
+  var TAGS = {
+    curiosity: { name: 'סקרנות וחקרנות', icon: 'spark' },
+    skills:    { name: 'הוראת מיומנויות', icon: 'puzzle' },
+    subject:   { name: 'יעד מקצועי',     icon: 'book' }
+  };
+  var STATUS = { planned: 'מתוכנן', active: 'בביצוע', done: 'הושלם', stuck: 'נתקע' };
+  var REGULARITY = ['פעם בשבוע', 'פעם בשבועיים', 'פעם בחודש', 'פעם במחצית', 'חד-פעמי', 'לאורך כל התקופה'];
+  var NEEDS = ['שעות פרטניות', 'זמן בישיבת צוות', 'הדרכה / השתלמות', 'חומרי למידה', 'תקציב', 'החלטת הנהלה', 'שינוי במערכת השעות', 'עזרה טכנולוגית'];
+  var PARTNERS_BASE = ['מנהלת', 'סגנית', 'מחנכות', 'יועצת', 'רכזת פדגוגית', 'מדריכה', 'הורים', 'תלמידות'];
+
+  // ---------- icons ----------
+  var ICONS = {
+    spark: '<path d="M12 2l2.2 6.3L20 10l-5.8 1.7L12 18l-2.2-6.3L4 10l5.8-1.7z" fill="currentColor"/>',
+    puzzle: '<path d="M10 3h4v3a2 2 0 104 0V3h3v7h-3a2 2 0 100 4h3v7h-7v-3a2 2 0 10-4 0v3H3v-7h3a2 2 0 100-4H3V3h7z" fill="currentColor"/>',
+    lock: '<path d="M7 10V7a5 5 0 0110 0v3h1a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8a2 2 0 012-2h1zm2 0h6V7a3 3 0 00-6 0v3z" fill="currentColor"/>',
+    book: '<path d="M4 4a2 2 0 012-2h13v18H6a2 2 0 00-2 2V4zm2 16h13v2H6a1 1 0 010-2z" fill="currentColor"/>',
+    pencil: '<path d="M15.2 3.8l5 5L9 20H4v-5L15.2 3.8z" fill="currentColor"/>',
+    grid: '<path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z" fill="currentColor"/>',
+    link: '<path d="M10 14a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1M14 10a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+    plus: '<path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>',
+    x: '<path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>',
+    check: '<path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'
+  };
+  function icon(n) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || '') + '</svg>'; }
+  function hydrateIcons(root) {
+    (root || document).querySelectorAll('[data-icon]').forEach(function (el) { el.innerHTML = icon(el.getAttribute('data-icon')); });
+  }
+
+  // ---------- helpers ----------
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function uid(p) { return p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function coord(id) { for (var i = 0; i < COORDS.length; i++) if (COORDS[i].id === id) return COORDS[i]; return null; }
+  function gradeLabel(g) { return g === 'all' ? 'כל השכבות' : g + '׳'; }
+  function gradesOf(item) { var g = item.grades || []; return g.indexOf('all') > -1 ? GRADES.slice() : g; }
+  function monthIdx(m) { return MONTHS.indexOf(m); }
+  function range(item) {
+    var a = monthIdx(item.from), b = monthIdx(item.to);
+    if (a < 0 && b < 0) return null;
+    if (a < 0) a = b; if (b < 0) b = a;
+    return a <= b ? [a, b] : [b, a];
+  }
+  function whenText(item) {
+    var r = range(item); if (!r) return '';
+    return r[0] === r[1] ? MONTHS[r[0]] : MONTHS[r[0]] + ' – ' + MONTHS[r[1]];
+  }
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+
+  // ---------- data layer ----------
+  var IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+  var DEMO_KEY = 'tzmatim-demo-v1';
+
+  function gas(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (resolve, reject) {
+      var r = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+      r[fn].apply(r, args);
+    });
+  }
+  var api = IS_GAS ? {
+    getAll: function () { return gas('getAll'); },
+    save: function (t, o) { return gas('saveItem', t, o); },
+    remove: function (t, id) { return gas('removeItem', t, id); },
+    checkAdmin: function (c) { return gas('checkAdmin', c); }
+  } : {
+    getAll: function () {
+      var raw = store(DEMO_KEY), d = null;
+      try { d = raw ? JSON.parse(raw) : null; } catch (e) { d = null; }
+      return Promise.resolve(d || demoData());
+    },
+    save: function (t, o) { o.updatedAt = new Date().toISOString(); upsert(t, o); persistDemo(); return Promise.resolve(o); },
+    remove: function (t, id) { state.data[t] = state.data[t].filter(function (x) { return x.id !== id; }); persistDemo(); return Promise.resolve(true); },
+    // קוד לתצוגה לדוגמה בלבד. הקוד האמיתי מוגדר ב-Code.gs
+    checkAdmin: function (c) { return Promise.resolve(String(c).trim() === '1234'); }
+  };
+  function persistDemo() { store(DEMO_KEY, JSON.stringify(state.data)); }
+  function upsert(t, o) {
+    var list = state.data[t], i;
+    for (i = 0; i < list.length; i++) if (list[i].id === o.id) { list[i] = o; return; }
+    list.push(o);
+  }
+
+  function demoData() {
+    return {
+      teams: [
+        { id: 'team_kodesh', coord: 'kodesh', teachers: ['רחלי', 'מירי', 'שושי', 'אסתי'] },
+        { id: 'team_hebrew', coord: 'hebrew', teachers: ['חוי', 'דבורי', 'נחמי'] },
+        { id: 'team_english', coord: 'english', teachers: ['ליבי', 'שרה'] },
+        { id: 'team_math', coord: 'math', teachers: ['יוכי', 'בתיה', 'מלכי', 'רבקי'] }
+      ],
+      goals: [
+        { id: 'g1', coord: 'math', kind: 'subject', title: 'הטמעת תוכנית הלימודים החדשה במתמטיקה', desc: 'היכרות של כל הצוות עם התוכנית ומעבר הדרגתי לפרקים החדשים.', grades: ['all'], teachers: ['יוכי', 'בתיה', 'מלכי', 'רבקי'] },
+        { id: 'g2', coord: 'kodesh', kind: 'curiosity', title: 'תלמידות שואלות שאלות על הפרשה', desc: 'לפתח שאלת חקר אישית בכל פרשה.', grades: ['ד', 'ה'], teachers: ['רחלי', 'מירי'] },
+        { id: 'g3', coord: 'hebrew', kind: 'skills', title: 'כתיבה טיעונית בשכבות הבוגרות', desc: '', grades: ['ו', 'ז', 'ח'], teachers: ['חוי', 'נחמי'] }
+      ],
+      actions: [
+        { id: 'a1', coord: 'math', title: 'פינת "מה היה קורה אילו" בשיעור', desc: 'פעם בשבוע שאלה פתוחה שאין לה פתרון אחד.', goals: ['g1'], tags: ['curiosity', 'subject'], grades: ['ה', 'ו'], teachers: ['יוכי', 'מלכי'], partners: ['מחנכות'], from: 'חשון', to: 'אדר ב׳', regularity: 'פעם בשבוע', needs: ['זמן בישיבת צוות'], needsOther: '', success: 'בכל כיתה נאספו 10 שאלות של תלמידות', status: 'active', reflection: '' },
+        { id: 'a2', coord: 'kodesh', title: 'יומן חוקרת לפרשת השבוע', desc: '', goals: ['g2'], tags: ['curiosity'], grades: ['ה'], teachers: ['רחלי'], partners: ['הורים'], from: 'תשרי', to: 'שבט', regularity: 'פעם בשבוע', needs: ['חומרי למידה'], needsOther: '', success: '', status: 'planned', reflection: '' },
+        { id: 'a3', coord: 'hebrew', title: 'שיעור מיומנות: לנמק ולהכריע', desc: 'מיומנות אחת בחודש, עם שפה משותפת לכל הכיתות.', goals: ['g3'], tags: ['skills'], grades: ['ז', 'ח'], teachers: ['חוי'], partners: ['רכזת פדגוגית'], from: 'כסלו', to: 'ניסן', regularity: 'פעם בחודש', needs: ['הדרכה / השתלמות'], needsOther: '', success: '', status: 'planned', reflection: '' },
+        { id: 'a4', coord: 'english', title: 'Question of the week', desc: 'שאלה באנגלית שהתלמידות חוקרות במשך שבוע.', goals: [], tags: ['curiosity'], grades: ['ה', 'ו'], teachers: ['ליבי'], partners: [], from: 'כסלו', to: 'טבת', regularity: 'פעם בשבוע', needs: [], needsOther: '', success: '', status: 'stuck', reflection: 'קשה למצוא זמן בשיעור אחרי המבחנים.' }
+      ],
+      district: [
+        { id: 'dist_math', coord: 'math', expression: 'פתרון בעיות מילוליות עם "שואלים – בודקים – מנמקים – מכריעים".', teachers: ['בתיה'], from: 'חשון', to: 'סיון', status: 'active', reflection: '' }
+      ]
+    };
+  }
+
+  // ---------- state ----------
+  var state = {
+    data: { teams: [], goals: [], actions: [], district: [] },
+    view: 'mine',
+    coord: store('tzmatim-coord') || null,
+    boardMode: 'grade',
+    boardGrade: 'ה',
+    admin: false,
+    loaded: false,
+    modalOpen: false
+  };
+
+  function team(c) {
+    var t = state.data.teams.filter(function (x) { return x.coord === c; })[0];
+    return t ? t.teachers || [] : [];
+  }
+  function goalsOf(c) { return state.data.goals.filter(function (x) { return x.coord === c; }); }
+  function actionsOf(c) { return state.data.actions.filter(function (x) { return x.coord === c; }); }
+  function districtOf(c) {
+    return state.data.district.filter(function (x) { return x.coord === c; })[0] ||
+      { id: 'dist_' + c, coord: c, expression: '', teachers: [], from: '', to: '', status: 'planned', reflection: '', _new: true };
+  }
+  function reqs(c) {
+    var acts = actionsOf(c), d = districtOf(c);
+    return {
+      goal: goalsOf(c).length > 0,
+      curiosity: acts.some(function (a) { return (a.tags || []).indexOf('curiosity') > -1; }),
+      skills: acts.some(function (a) { return (a.tags || []).indexOf('skills') > -1; }),
+      district: !!(d.expression && d.expression.trim())
+    };
+  }
+  var REQ_LABELS = { goal: 'יעד אחד לפחות', curiosity: 'פעולת סקרנות', skills: 'פעולת מיומנויות', district: 'המהלך המחוזי' };
+  function reqChips(c) {
+    var r = reqs(c);
+    return Object.keys(REQ_LABELS).map(function (k) {
+      return '<span class="req' + (r[k] ? ' done' : '') + '"><span class="dot">' + (r[k] ? icon('check') : '') + '</span>' + REQ_LABELS[k] + '</span>';
+    }).join('');
+  }
+
+  // ---------- render: shell ----------
+  var main = document.getElementById('main');
+
+  function render() {
+    document.querySelectorAll('.tab').forEach(function (t) {
+      t.setAttribute('aria-selected', String(t.getAttribute('data-view') === state.view));
+    });
+    if (!state.loaded) { main.innerHTML = '<div class="empty-state">טוענת את התוכניות…</div>'; return; }
+    var html = '';
+    if (state.view === 'mine') html = state.coord && coord(state.coord) ? renderPlan(state.coord) : renderPicker();
+    else if (state.view === 'board') html = renderBoard();
+    else if (state.view === 'links') html = renderLinks();
+    else html = state.admin ? renderAdmin() : renderGate();
+    main.innerHTML = html;
+    hydrateIcons(main);
+  }
+
+  function renderPicker() {
+    return '<p class="pick-intro">מי את? בחרי את התחום שלך כדי לבנות את התוכנית.</p><div class="coord-grid">' +
+      COORDS.map(function (c) {
+        var n = actionsOf(c.id).length, g = goalsOf(c.id).length;
+        return '<button class="coord-card" style="--c:' + c.color + '" data-act="pick" data-id="' + c.id + '">' +
+          '<span class="blob"></span><h3>רכזת ' + c.name + '</h3>' +
+          '<span class="meta">' + g + ' יעדים · ' + n + ' פעולות · ' + team(c.id).length + ' מורות</span>' +
+          '<span class="mini-req">' + reqChips(c.id) + '</span></button>';
+      }).join('') + '</div>';
+  }
+
+  // ---------- render: my plan ----------
+  function renderPlan(cid) {
+    var c = coord(cid), t = team(cid), goals = goalsOf(cid), acts = actionsOf(cid), d = districtOf(cid);
+    var h = '<section class="plan-head" style="--c:' + c.color + '">' +
+      '<div class="who"><span class="badge">' + c.letter + '</span><div><h2>התוכנית של רכזת ' + c.name + '</h2>' +
+      '<button class="switch" data-act="switch">לא את? החליפי תחום</button></div></div>' +
+      '<div class="meter" aria-label="מה כבר יש בתוכנית">' + reqChips(cid) + '</div></section>';
+
+    h += '<div class="section-title"><h2>הצוות שלי</h2><span class="hint">המורות שעובדות איתך. הן יופיעו לבחירה בכל יעד ופעולה.</span></div>' +
+      '<div class="team">' + t.map(function (p, i) {
+        return '<span class="person">' + esc(p) + '<button data-act="rm-teacher" data-i="' + i + '" aria-label="הסרת ' + esc(p) + '">' + icon('x') + '</button></span>';
+      }).join('') +
+      '<form class="add-person" data-form="teacher"><input type="text" id="newTeacher" placeholder="+ הוסיפי מורה" aria-label="שם מורה להוספה" maxlength="40"></form></div>';
+
+    h += '<div class="section-title"><h2>היעדים שלי</h2><span class="hint">יעדים בתחום הדעת וגם יעדים בית ספריים. לכל השכבות או לשכבה מסוימת.</span></div><div class="cards">' +
+      goals.map(goalCard).join('') +
+      '<button class="add-card" data-act="new-goal"><span>' + icon('plus') + 'יעד חדש</span></button></div>';
+
+    h += '<div class="section-title"><h2>המהלך המחוזי · כיתות ה׳</h2><span class="hint">כבר חלק מהתוכנית של כולן. ספרי איך זה נראה אצלך.</span></div><div class="cards">' +
+      districtCard(d, true) + '</div>';
+
+    h += '<div class="section-title"><h2>הפעולות שלי</h2><span class="hint">לפחות פעולה אחת לסקרנות וחקרנות ולפחות אחת להוראת מיומנויות.</span></div><div class="cards">' +
+      acts.map(function (a) { return actionCard(a, true); }).join('') +
+      '<button class="add-card" data-act="new-action"><span>' + icon('plus') + 'פעולה חדשה</span></button></div>';
+    return h;
+  }
+
+  function gradePills(g) {
+    if (!g || !g.length) return '';
+    if (g.indexOf('all') > -1) return '<span class="pill grade">כל השכבות</span>';
+    return g.map(function (x) { return '<span class="pill grade">' + x + '׳</span>'; }).join('');
+  }
+  function tagPills(tags, c) {
+    return (tags || []).map(function (t) {
+      return '<span class="pill tag-' + t + '" style="--c:' + c.color + '">' + icon(TAGS[t].icon) + TAGS[t].name + '</span>';
+    }).join('');
+  }
+  function peopleText(arr) { return (arr || []).map(esc).join(', '); }
+
+  function goalCard(g) {
+    var c = coord(g.coord);
+    var kindTag = g.kind ? tagPills([g.kind], c) : '';
+    return '<article class="card clickable" data-act="edit-goal" data-id="' + esc(g.id) + '" tabindex="0">' +
+      '<div class="row">' + kindTag + gradePills(g.grades) + '</div>' +
+      '<h3>' + esc(g.title) + '</h3>' + (g.desc ? '<p class="desc">' + esc(g.desc) + '</p>' : '') +
+      (g.teachers && g.teachers.length ? '<dl class="facts"><dt>עם</dt><dd>' + peopleText(g.teachers) + '</dd></dl>' : '') +
+      '</article>';
+  }
+
+  function actionCard(a, editable, showOwner) {
+    var c = coord(a.coord);
+    var goalNames = (a.goals || []).map(function (id) {
+      var g = state.data.goals.filter(function (x) { return x.id === id; })[0]; return g ? esc(g.title) : '';
+    }).filter(Boolean).join(' · ');
+    var needs = [].concat(a.needs || [], a.needsOther ? [a.needsOther] : []);
+    return '<article class="card' + (editable ? ' clickable' : '') + '"' + (editable ? ' data-act="edit-action" data-id="' + esc(a.id) + '" tabindex="0"' : '') + '>' +
+      (showOwner ? '<span class="owner" style="background:' + c.color + '" title="רכזת ' + c.name + '"></span>' : '') +
+      '<div class="row">' + tagPills(a.tags, c) + '</div>' +
+      '<h3>' + esc(a.title) + '</h3>' + (a.desc ? '<p class="desc">' + esc(a.desc) + '</p>' : '') +
+      '<dl class="facts">' +
+      (showOwner ? '<dt>רכזת</dt><dd>' + c.name + '</dd>' : '') +
+      (goalNames ? '<dt>מקדמת</dt><dd>' + goalNames + '</dd>' : '') +
+      (a.teachers && a.teachers.length ? '<dt>מורות</dt><dd>' + peopleText(a.teachers) + '</dd>' : '') +
+      (a.partners && a.partners.length ? '<dt>שותפים</dt><dd>' + peopleText(a.partners) + '</dd>' : '') +
+      (a.regularity ? '<dt>סדירות</dt><dd>' + esc(a.regularity) + '</dd>' : '') +
+      (needs.length ? '<dt>צריכה</dt><dd>' + peopleText(needs) + '</dd>' : '') +
+      (a.success ? '<dt>הצלחה</dt><dd>' + esc(a.success) + '</dd>' : '') +
+      (a.reflection ? '<dt>מהשטח</dt><dd>' + esc(a.reflection) + '</dd>' : '') +
+      '</dl><div class="foot"><div class="row">' + gradePills(a.grades) + (whenText(a) ? '<span class="pill when">' + whenText(a) + '</span>' : '') + '</div>' +
+      '<span class="pill st-' + (a.status || 'planned') + '">' + STATUS[a.status || 'planned'] + '</span></div></article>';
+  }
+
+  function districtCard(d, editable, showOwner) {
+    var c = coord(d.coord);
+    var filled = d.expression && d.expression.trim();
+    return '<article class="card district' + (editable ? ' clickable' : '') + '"' + (editable ? ' data-act="edit-district" tabindex="0"' : '') + '>' +
+      (showOwner ? '<span class="owner" style="background:' + c.color + '"></span>' : '') +
+      '<span class="lock">' + icon('lock') + 'קבוע בתוכנית · מחוזי</span>' +
+      '<h3>המהלך המחוזי לפיתוח מיומנויות חשיבה' + (showOwner ? ' · ' + c.name : '') + '</h3>' +
+      (filled ? '<p class="desc">' + esc(d.expression) + '</p>' : '<p class="desc">עוד לא נכתב איך המהלך בא לידי ביטוי ב' + c.name + '. ' + (editable ? 'לחצי כדי למלא.' : '') + '</p>') +
+      '<dl class="facts">' +
+      (d.teachers && d.teachers.length ? '<dt>מורות</dt><dd>' + peopleText(d.teachers) + '</dd>' : '') +
+      (d.reflection ? '<dt>מהשטח</dt><dd>' + esc(d.reflection) + '</dd>' : '') +
+      '</dl><div class="foot"><div class="row"><span class="pill grade">ה׳</span>' + (whenText(d) ? '<span class="pill when">' + whenText(d) + '</span>' : '') + '</div>' +
+      '<span class="pill st-' + (d.status || 'planned') + '">' + STATUS[d.status || 'planned'] + '</span></div></article>';
+  }
+
+  // ---------- render: shared board ----------
+  function itemsForGrade(g) {
+    var out = {};
+    COORDS.forEach(function (c) {
+      out[c.id] = {
+        goals: goalsOf(c.id).filter(function (x) { return gradesOf(x).indexOf(g) > -1; }),
+        actions: actionsOf(c.id).filter(function (x) { return gradesOf(x).indexOf(g) > -1; }),
+        district: g === 'ה' ? districtOf(c.id) : null
+      };
+    });
+    return out;
+  }
+  function gradeCount(g) {
+    var n = 0, m = itemsForGrade(g);
+    COORDS.forEach(function (c) { n += m[c.id].actions.length + m[c.id].goals.length; });
+    return n;
+  }
+
+  function renderBoard() {
+    var h = '<div class="section-title"><h2>הלוח המשותף</h2>' +
+      '<div class="seg" role="group" aria-label="סוג תצוגה">' +
+      '<button data-act="mode" data-mode="grade" aria-pressed="' + (state.boardMode === 'grade') + '">לפי שכבה</button>' +
+      '<button data-act="mode" data-mode="time" aria-pressed="' + (state.boardMode === 'time') + '">לפי חודשים</button></div></div>';
+    return h + (state.boardMode === 'grade' ? renderByGrade() : renderTimeline());
+  }
+
+  function renderByGrade() {
+    var g = state.boardGrade, m = itemsForGrade(g);
+    var h = '<div class="grade-pick" role="group" aria-label="בחירת שכבה">' + GRADES.map(function (x) {
+      var n = gradeCount(x);
+      return '<button class="grade-btn" data-act="grade" data-g="' + x + '" aria-pressed="' + (x === g) + '" aria-label="שכבה ' + x + '">' + x + (n ? '<span class="n">' + n + '</span>' : '') + '</button>';
+    }).join('') + '</div><p class="section-title hint" style="margin:6px 0 0">כל מה שקורה בשכבה ' + g + '׳, מכל התחומים. יעדים שסומנו "כל השכבות" מופיעים בכל שכבה.</p>';
+    h += '<div class="lanes">' + COORDS.map(function (c) {
+      var x = m[c.id], body = '';
+      if (x.district) body += districtCard(x.district, false);
+      body += x.goals.map(function (go) {
+        return '<article class="card"><span class="kind">יעד</span><div class="row">' + (go.kind ? tagPills([go.kind], c) : '') + '</div><h3>' + esc(go.title) + '</h3>' +
+          (go.teachers && go.teachers.length ? '<dl class="facts"><dt>עם</dt><dd>' + peopleText(go.teachers) + '</dd></dl>' : '') + '</article>';
+      }).join('');
+      body += x.actions.map(function (a) {
+        return '<article class="card"><span class="kind">פעולה</span><div class="row">' + tagPills(a.tags, c) + '</div><h3>' + esc(a.title) + '</h3>' +
+          '<div class="row">' + (whenText(a) ? '<span class="pill when">' + whenText(a) + '</span>' : '') + '<span class="pill st-' + (a.status || 'planned') + '">' + STATUS[a.status || 'planned'] + '</span></div></article>';
+      }).join('');
+      if (!x.goals.length && !x.actions.length && !x.district) body += '<div class="empty">אין עדיין משהו בשכבה הזו.</div>';
+      return '<section class="lane" style="--c:' + c.color + '"><header><i></i>' + c.name + '</header>' + body + '</section>';
+    }).join('') + '</div>';
+    return h;
+  }
+
+  function renderTimeline() {
+    var h = '<div class="timeline-scroll"><div class="timeline"><div class="mh"></div>' +
+      MONTHS.map(function (m) { return '<div class="mh' + (m.indexOf('אדר') === 0 ? ' adar' : '') + '">' + m + '</div>'; }).join('');
+    COORDS.forEach(function (c) {
+      var items = actionsOf(c.id).map(function (a) { return { a: a, r: range(a), d: false }; });
+      var d = districtOf(c.id);
+      items.unshift({ a: d, r: range(d), d: true });
+      var placed = items.filter(function (x) { return x.r; });
+      h += '<div class="lh"><i style="background:' + c.color + '"></i>' + c.name + '</div><div class="track">' +
+        placed.map(function (x) {
+          var a = x.a, tags = a.tags || [];
+          var label = x.d ? 'מהלך מחוזי · ה׳' : esc(a.title);
+          var dots = (tags.indexOf('curiosity') > -1 ? '<span class="tg cur"></span>' : '') + (tags.indexOf('skills') > -1 ? '<span class="tg skl"></span>' : '');
+          var grades = x.d ? 'ה׳' : (a.grades || []).map(gradeLabel).join(' ');
+          return '<button class="bar' + (x.d ? ' district' : '') + '" style="grid-column:' + (x.r[0] + 1) + ' / ' + (x.r[1] + 2) + ';' + (x.d ? '' : 'background:' + c.color) + '"' +
+            ' title="' + (x.d ? 'המהלך המחוזי' : esc(a.title)) + ' · ' + grades + ' · ' + whenText(a) + '"' +
+            ' data-act="peek" data-type="' + (x.d ? 'district' : 'action') + '" data-id="' + esc(a.id) + '" data-coord="' + c.id + '">' + dots + label + '</button>';
+        }).join('') + (placed.length ? '' : '<span style="grid-column:1 / -1;color:var(--muted);font-size:.88rem;padding:4px 12px">עוד לא סומנו חודשים</span>') + '</div>';
+    });
+    h += '</div></div><div class="legend"><span><i style="background:var(--cur)"></i>סקרנות וחקרנות</span><span><i style="background:var(--skl)"></i>הוראת מיומנויות</span><span><i style="background:var(--dist)"></i>המהלך המחוזי</span><span>לחיצה על פס פותחת את הפרטים</span></div>';
+    return h;
+  }
+
+  // ---------- connections ----------
+  function allItems() {
+    var list = state.data.actions.map(function (a) { return { kind: 'action', item: a }; });
+    COORDS.forEach(function (c) {
+      var d = districtOf(c.id);
+      if (d.expression && d.expression.trim()) list.push({ kind: 'district', item: Object.assign({}, d, { grades: ['ה'], title: 'המהלך המחוזי' }) });
+    });
+    return list;
+  }
+  function findLinks() {
+    var list = allItems(), out = [];
+    for (var i = 0; i < list.length; i++) for (var j = i + 1; j < list.length; j++) {
+      var a = list[i].item, b = list[j].item;
+      if (a.coord === b.coord) continue;
+      var ga = gradesOf(a), gb = gradesOf(b);
+      var shared = ga.filter(function (g) { return gb.indexOf(g) > -1; });
+      if (!shared.length) continue;
+      var ra = range(a), rb = range(b), overlap = null;
+      if (ra && rb) {
+        var s = Math.max(ra[0], rb[0]), e = Math.min(ra[1], rb[1]);
+        if (s > e) continue;
+        overlap = [s, e];
+      }
+      var sharedTags = (a.tags || []).filter(function (t) { return t !== 'subject' && (b.tags || []).indexOf(t) > -1; });
+      var score = (overlap ? 2 : 0) + sharedTags.length * 2 + (list[i].kind === 'district' || list[j].kind === 'district' ? 1 : 0);
+      out.push({ a: list[i], b: list[j], grades: shared, overlap: overlap, tags: sharedTags, score: score });
+    }
+    out.sort(function (x, y) { return y.score - x.score; });
+    return out;
+  }
+  function renderLinks() {
+    var links = findLinks();
+    var h = '<div class="section-title"><h2>הזדמנויות לחיבור</h2><span class="hint">פעולות של רכזות שונות שנפגשות באותה שכבה ובאותה תקופה. אולי כדאי לעשות אותן יחד?</span></div>';
+    if (!links.length) return h + '<div class="empty-state">כשרכזות יוסיפו פעולות עם שכבות וחודשים, כאן יופיעו המקומות שבהם הן נפגשות.</div>';
+    h += '<div class="links">' + links.slice(0, 40).map(function (l) {
+      var ca = coord(l.a.item.coord), cb = coord(l.b.item.coord);
+      var why = ['שכבה ' + l.grades.map(function (g) { return g + '׳'; }).join(', ')];
+      if (l.overlap) why.push(l.overlap[0] === l.overlap[1] ? MONTHS[l.overlap[0]] : MONTHS[l.overlap[0]] + ' – ' + MONTHS[l.overlap[1]]);
+      if (l.tags.length) why.push('שתיהן מקדמות ' + l.tags.map(function (t) { return TAGS[t].name; }).join(' ו'));
+      return '<article class="link-card"><div class="pair">' +
+        '<div class="side" style="--c:' + ca.color + '"><b>' + ca.name + '</b><span>' + esc(l.a.item.title) + '</span></div>' +
+        '<span class="knot">' + icon('link') + '</span>' +
+        '<div class="side" style="--c:' + cb.color + '"><b>' + cb.name + '</b><span>' + esc(l.b.item.title) + '</span></div></div>' +
+        '<div class="why">' + why.join(' · ') + '</div></article>';
+    }).join('') + '</div>';
+    return h;
+  }
+
+  // ---------- admin ----------
+  function renderGate() {
+    return '<form class="gate" data-form="admin"><h2>מבט ניהולי</h2><p style="margin:0;color:var(--muted)">לך ולמנהלת: מי עמדה בדרישות, מה הרכזות צריכות, ומה נתקע.</p>' +
+      '<label for="adminCode" class="sr">קוד כניסה</label><input id="adminCode" type="password" inputmode="numeric" autocomplete="off" placeholder="קוד">' +
+      '<div class="err" id="adminErr"></div><button class="btn primary" type="submit" style="justify-content:center">כניסה</button></form>';
+  }
+  function renderAdmin() {
+    var acts = state.data.actions;
+    var count = function (s) { return acts.filter(function (a) { return (a.status || 'planned') === s; }).length; };
+    var h = '<div class="section-title"><h2>מבט ניהולי</h2><span class="hint">מתעדכן מכל מה שהרכזות כותבות</span></div>' +
+      '<div class="stats">' +
+      '<div class="stat"><b>' + state.data.goals.length + '</b><span>יעדים</span></div>' +
+      '<div class="stat"><b>' + acts.length + '</b><span>פעולות</span></div>' +
+      '<div class="stat"><b>' + count('active') + '</b><span>בביצוע</span></div>' +
+      '<div class="stat"><b>' + count('done') + '</b><span>הושלמו</span></div>' +
+      '<div class="stat"><b style="color:var(--bad)">' + count('stuck') + '</b><span>נתקעו</span></div></div>';
+
+    h += '<div class="section-title"><h2>עמידה בדרישות</h2></div><div class="table-scroll"><table><thead><tr><th>רכזת</th>' +
+      Object.keys(REQ_LABELS).map(function (k) { return '<th>' + REQ_LABELS[k] + '</th>'; }).join('') +
+      '<th>יעדים</th><th>פעולות</th><th>מורות בצוות</th></tr></thead><tbody>' +
+      COORDS.map(function (c) {
+        var r = reqs(c.id);
+        return '<tr><td><b>' + c.name + '</b></td>' + Object.keys(REQ_LABELS).map(function (k) {
+          return '<td class="' + (r[k] ? 'yes' : 'no') + '">' + (r[k] ? 'יש' : 'חסר') + '</td>';
+        }).join('') + '<td class="num">' + goalsOf(c.id).length + '</td><td class="num">' + actionsOf(c.id).length + '</td><td class="num">' + team(c.id).length + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+
+    var needCount = {}, other = [];
+    acts.forEach(function (a) {
+      (a.needs || []).forEach(function (n) { needCount[n] = (needCount[n] || 0) + 1; });
+      if (a.needsOther) other.push({ c: coord(a.coord), t: a.needsOther, a: a.title });
+    });
+    var keys = Object.keys(needCount).sort(function (x, y) { return needCount[y] - needCount[x]; });
+    var max = keys.length ? needCount[keys[0]] : 1;
+    h += '<div class="section-title"><h2>מה הרכזות צריכות</h2><span class="hint">כמה פעולות צריכות כל משאב</span></div><div class="panel">' +
+      (keys.length ? '<div class="needs">' + keys.map(function (k) {
+        return '<div class="need-row"><span>' + esc(k) + '</span><div class="track2"><div class="fill" style="width:' + Math.round(needCount[k] / max * 100) + '%"></div></div><b>' + needCount[k] + '</b></div>';
+      }).join('') + '</div>' : '<p style="margin:0;color:var(--muted)">עוד לא סומנו צרכים.</p>') +
+      (other.length ? '<h3 style="margin:18px 0 8px;font-size:1rem">בקשות נוספות</h3><ul class="list-plain">' + other.map(function (o) {
+        return '<li><span class="pill tag-subject" style="--c:' + o.c.color + '">' + o.c.name + '</span>' + esc(o.t) + ' <span style="color:var(--muted)">(' + esc(o.a) + ')</span></li>';
+      }).join('') + '</ul>' : '') + '</div>';
+
+    var stuck = acts.filter(function (a) { return a.status === 'stuck'; });
+    var dStuck = state.data.district.filter(function (d) { return d.status === 'stuck'; });
+    h += '<div class="section-title"><h2>מה נתקע</h2></div>';
+    h += (stuck.length || dStuck.length) ? '<div class="cards">' + stuck.map(function (a) { return actionCard(a, false, true); }).join('') +
+      dStuck.map(function (d) { return districtCard(d, false, true); }).join('') + '</div>' : '<div class="empty-state">אין פעולות שסומנו "נתקע".</div>';
+
+    var reflections = acts.filter(function (a) { return a.reflection && a.status !== 'stuck'; });
+    if (reflections.length) {
+      h += '<div class="section-title"><h2>מה עובד</h2><span class="hint">תובנות מהשטח שהרכזות כתבו</span></div><div class="cards">' +
+        reflections.map(function (a) { return actionCard(a, false, true); }).join('') + '</div>';
+    }
+    h += '<p style="margin-top:24px"><button class="btn ghost small" data-act="logout">יציאה מהמבט הניהולי</button></p>';
+    return h;
+  }
+
+  // ---------- modal / forms ----------
+  var modalRoot = document.getElementById('modalRoot');
+  function chipGroup(id, options, selected, opts) {
+    opts = opts || {};
+    selected = selected || [];
+    return '<div class="chips" data-chips="' + id + '"' + (opts.single ? ' data-single="1"' : '') + ' role="group">' +
+      options.map(function (o) {
+        var val = typeof o === 'string' ? o : o.value, label = typeof o === 'string' ? o : o.label;
+        return '<button type="button" class="chip ' + (o.cls || '') + '" data-val="' + esc(val) + '" aria-pressed="' + (selected.indexOf(val) > -1) + '"' + (o.style ? ' style="' + o.style + '"' : '') + '>' + label + '</button>';
+      }).join('') + '</div>';
+  }
+  function readChips(form, id) {
+    return Array.prototype.map.call(form.querySelectorAll('[data-chips="' + id + '"] [aria-pressed="true"]'), function (b) { return b.getAttribute('data-val'); });
+  }
+  function gradeField(sel) {
+    return '<div class="field"><span class="lbl">שכבות</span>' + chipGroup('grades',
+      [{ value: 'all', label: 'כל השכבות', cls: 'all' }].concat(GRADES.map(function (g) { return { value: g, label: g, cls: 'grade-chip' }; })), sel) + '</div>';
+  }
+  function teacherField(cid, sel, label) {
+    var t = team(cid);
+    var opts = t.slice();
+    (sel || []).forEach(function (s) { if (opts.indexOf(s) < 0) opts.push(s); });
+    return '<div class="field"><span class="lbl">' + (label || 'עם אילו מורות מהצוות') + '</span>' +
+      (opts.length ? chipGroup('teachers', opts, sel) : '<span class="sub">עוד לא הוספת מורות לצוות. אפשר להוסיף בראש התוכנית, תחת "הצוות שלי".</span>') + '</div>';
+  }
+  function monthFields(item) {
+    var opt = function (v) { return '<option value="">–</option>' + MONTHS.map(function (m) { return '<option' + (m === v ? ' selected' : '') + '>' + m + '</option>'; }).join(''); };
+    return '<div class="two"><div class="field"><label for="f_from">מתחילה ב…</label><select id="f_from">' + opt(item.from) + '</select></div>' +
+      '<div class="field"><label for="f_to">מסתיימת ב…</label><select id="f_to">' + opt(item.to) + '</select></div></div>';
+  }
+  function statusField(v) {
+    return '<div class="field"><span class="lbl">סטטוס</span>' + chipGroup('status',
+      Object.keys(STATUS).map(function (k) { return { value: k, label: STATUS[k] }; }), [v || 'planned'], { single: true }) + '</div>';
+  }
+
+  function openModal(title, body, onSave, onDelete) {
+    state.modalOpen = true;
+    modalRoot.innerHTML = '<div class="overlay" data-act="close-bg"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">' +
+      '<header><h2 id="mTitle">' + title + '</h2><button class="x" data-act="close" aria-label="סגירה">' + icon('x') + '</button></header>' +
+      '<form id="mForm" novalidate>' + body + '<div class="form-err" id="mErr"></div></form>' +
+      '<footer><button class="btn primary" data-act="save">' + icon('check') + 'שמירה</button>' +
+      (onDelete ? '<button class="btn danger" data-act="delete">מחיקה</button>' : '') + '</footer></div></div>';
+    var form = document.getElementById('mForm');
+    modalRoot._save = onSave; modalRoot._delete = onDelete;
+    form.addEventListener('submit', function (e) { e.preventDefault(); });
+    var first = form.querySelector('input[type="text"], textarea');
+    if (first) first.focus();
+  }
+  function closeModal() { state.modalOpen = false; modalRoot.innerHTML = ''; modalRoot._save = modalRoot._delete = null; }
+  function formErr(msg) { var e = document.getElementById('mErr'); if (e) e.textContent = msg; }
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+  function editGoal(g) {
+    var cid = state.coord, c = coord(cid), isNew = !g;
+    g = g || { id: uid('g'), coord: cid, kind: 'subject', title: '', desc: '', grades: ['all'], teachers: [] };
+    var body = '<div class="field"><span class="lbl">סוג היעד</span>' + chipGroup('kind', [
+      { value: 'subject', label: icon('book') + 'יעד מקצועי בתחום הדעת', cls: 'big t-subject', style: '--c:' + c.color },
+      { value: 'curiosity', label: icon('spark') + 'סקרנות וחקרנות', cls: 'big t-curiosity' },
+      { value: 'skills', label: icon('puzzle') + 'הוראת מיומנויות', cls: 'big t-skills' }
+    ], [g.kind], { single: true }) + '</div>' +
+      '<div class="field"><label for="f_title">היעד</label><input type="text" id="f_title" maxlength="140" value="' + esc(g.title) + '" placeholder="לדוגמה: הטמעת תוכנית הלימודים החדשה"></div>' +
+      '<div class="field"><label for="f_desc">פירוט <span class="sub">(לא חובה)</span></label><textarea id="f_desc">' + esc(g.desc) + '</textarea></div>' +
+      gradeField(g.grades) + teacherField(cid, g.teachers);
+    openModal(isNew ? 'יעד חדש' : 'עריכת יעד', body, function (form) {
+      var o = Object.assign({}, g, {
+        kind: readChips(form, 'kind')[0] || 'subject', title: val('f_title'), desc: val('f_desc'),
+        grades: readChips(form, 'grades'), teachers: readChips(form, 'teachers')
+      });
+      if (!o.title) return formErr('כתבי מה היעד.');
+      if (!o.grades.length) return formErr('בחרי שכבה אחת לפחות, או "כל השכבות".');
+      return o;
+    }, isNew ? null : function () { return { type: 'goals', id: g.id }; }, 'goals');
+    modalRoot._type = 'goals';
+  }
+
+  function editAction(a) {
+    var cid = state.coord, c = coord(cid), isNew = !a;
+    a = a || { id: uid('a'), coord: cid, title: '', desc: '', goals: [], tags: [], grades: [], teachers: [], partners: [], from: '', to: '', regularity: '', needs: [], needsOther: '', success: '', status: 'planned', reflection: '' };
+    var goals = goalsOf(cid);
+    var partners = PARTNERS_BASE.concat(COORDS.filter(function (x) { return x.id !== cid; }).map(function (x) { return 'רכזת ' + x.name; }));
+    (a.partners || []).forEach(function (p) { if (partners.indexOf(p) < 0) partners.push(p); });
+    var regs = REGULARITY.slice(); if (a.regularity && regs.indexOf(a.regularity) < 0) regs.push(a.regularity);
+    var body =
+      '<div class="field"><label for="f_title">שם הפעולה</label><input type="text" id="f_title" maxlength="140" value="' + esc(a.title) + '" placeholder="לדוגמה: יומן חוקרת לפרשת השבוע"></div>' +
+      '<div class="field"><label for="f_desc">מה עושים? <span class="sub">(בקצרה)</span></label><textarea id="f_desc">' + esc(a.desc) + '</textarea></div>' +
+      '<div class="field"><span class="lbl">מה הפעולה מקדמת? <span class="sub">אפשר לבחור יותר מאחד</span></span>' + chipGroup('tags', [
+        { value: 'curiosity', label: icon('spark') + 'סקרנות וחקרנות', cls: 'big t-curiosity' },
+        { value: 'skills', label: icon('puzzle') + 'הוראת מיומנויות', cls: 'big t-skills' },
+        { value: 'subject', label: icon('book') + 'יעד מקצועי בתחום', cls: 'big t-subject', style: '--c:' + c.color }
+      ], a.tags) + '</div>' +
+      (goals.length ? '<div class="field"><span class="lbl">לאיזה יעד היא שייכת?</span>' + chipGroup('goals', goals.map(function (g) { return { value: g.id, label: esc(g.title) }; }), a.goals) + '</div>' : '') +
+      gradeField(a.grades) + teacherField(cid, a.teachers, 'אילו מורות מהצוות שותפות') +
+      '<div class="field"><span class="lbl">שותפים נוספים</span>' + chipGroup('partners', partners, a.partners) + '</div>' +
+      monthFields(a) +
+      '<div class="field"><span class="lbl">סדירות: באיזו תדירות זה קורה?</span>' + chipGroup('reg', regs, [a.regularity], { single: true }) + '</div>' +
+      '<div class="field"><span class="lbl">מה אני צריכה בשביל זה</span>' + chipGroup('needs', NEEDS, a.needs) +
+      '<input type="text" id="f_needsOther" maxlength="160" value="' + esc(a.needsOther) + '" placeholder="משהו אחר? כתבי כאן"></div>' +
+      '<div class="field"><label for="f_success">איך נדע שהצלחנו?</label><input type="text" id="f_success" maxlength="200" value="' + esc(a.success) + '" placeholder="תוצר, מדד או סימן אחד"></div>' +
+      statusField(a.status) +
+      '<div class="field"><label for="f_refl">מה עובד / מה נתקע <span class="sub">(לעדכן במהלך השנה)</span></label><textarea id="f_refl">' + esc(a.reflection) + '</textarea></div>';
+    openModal(isNew ? 'פעולה חדשה' : 'עריכת פעולה', body, function (form) {
+      var o = Object.assign({}, a, {
+        title: val('f_title'), desc: val('f_desc'), tags: readChips(form, 'tags'), goals: readChips(form, 'goals'),
+        grades: readChips(form, 'grades'), teachers: readChips(form, 'teachers'), partners: readChips(form, 'partners'),
+        from: val('f_from'), to: val('f_to'), regularity: readChips(form, 'reg')[0] || '', needs: readChips(form, 'needs'),
+        needsOther: val('f_needsOther'), success: val('f_success'), status: readChips(form, 'status')[0] || 'planned', reflection: val('f_refl')
+      });
+      if (!o.title) return formErr('תני שם לפעולה.');
+      if (!o.tags.length) return formErr('סמני מה הפעולה מקדמת.');
+      if (!o.grades.length) return formErr('בחרי שכבה אחת לפחות, או "כל השכבות".');
+      return o;
+    }, isNew ? null : function () { return { type: 'actions', id: a.id }; });
+    modalRoot._type = 'actions';
+  }
+
+  function editDistrict() {
+    var cid = state.coord, d = districtOf(cid), c = coord(cid);
+    var body = '<div class="note-locked">' + icon('lock').replace('<svg', '<svg style="width:13px;height:13px;vertical-align:-1px"') +
+      ' המהלך המחוזי לפיתוח מיומנויות חשיבה בכיתות ה׳ הוא חלק קבוע מהתוכנית של כל הרכזות. כאן כותבים איך הוא בא לידי ביטוי ב' + c.name + '.</div>' +
+      '<div class="field"><label for="f_expr">איך המהלך בא לידי ביטוי בתחום שלי?</label><textarea id="f_expr" placeholder="לדוגמה: באילו שיעורים, באיזו מיומנות, מה התלמידות עושות">' + esc(d.expression) + '</textarea></div>' +
+      teacherField(cid, d.teachers, 'אילו מורות בכיתות ה׳ שותפות') + monthFields(d) + statusField(d.status) +
+      '<div class="field"><label for="f_refl">מה עובד / מה נתקע</label><textarea id="f_refl">' + esc(d.reflection) + '</textarea></div>';
+    openModal('המהלך המחוזי · ' + c.name, body, function (form) {
+      var o = Object.assign({}, d, {
+        expression: val('f_expr'), teachers: readChips(form, 'teachers'), from: val('f_from'), to: val('f_to'),
+        status: readChips(form, 'status')[0] || 'planned', reflection: val('f_refl')
+      });
+      delete o._new;
+      if (!o.expression) return formErr('כתבי בכמה מילים איך המהלך נראה אצלך.');
+      return o;
+    }, null);
+    modalRoot._type = 'district';
+  }
+
+  function peek(type, id, cid) {
+    var item = type === 'district' ? districtOf(cid) : state.data.actions.filter(function (x) { return x.id === id; })[0];
+    if (!item) return;
+    state.modalOpen = true;
+    var card = type === 'district' ? districtCard(item, false, true) : actionCard(item, false, true);
+    modalRoot.innerHTML = '<div class="overlay" data-act="close-bg"><div class="modal" role="dialog" aria-modal="true" aria-label="פרטים">' +
+      '<header><h2>פרטים</h2><button class="x" data-act="close" aria-label="סגירה">' + icon('x') + '</button></header>' +
+      '<div style="padding:18px 22px 22px">' + card + '</div></div></div>';
+  }
+
+  // ---------- saving ----------
+  var syncEl = document.getElementById('sync');
+  function setSync(t) { syncEl.textContent = t; }
+  var toastEl = document.getElementById('toast'), toastT;
+  function toast(t) { toastEl.textContent = t; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { toastEl.hidden = true; }, 2200); }
+
+  function persist(type, obj, msg) {
+    upsert(type, obj); render();
+    setSync('שומרת…');
+    return api.save(type, obj).then(function (saved) {
+      upsert(type, saved || obj); setSync(IS_GAS ? 'נשמר' : 'נשמר בדפדפן הזה'); toast(msg || 'נשמר'); render();
+    }).catch(function (e) {
+      setSync('השמירה נכשלה'); toast('השמירה לא הצליחה. בדקי חיבור ונסי שוב.'); console.error(e);
+    });
+  }
+
+  function saveTeam(cid, teachers) {
+    var t = state.data.teams.filter(function (x) { return x.coord === cid; })[0] || { id: 'team_' + cid, coord: cid };
+    persist('teams', Object.assign({}, t, { teachers: teachers }), 'הצוות עודכן');
+  }
+
+  // ---------- events ----------
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest('.tab');
+    if (tab) { state.view = tab.getAttribute('data-view'); render(); return; }
+    var chip = e.target.closest('.chip');
+    if (chip && chip.closest('[data-chips]')) {
+      var grp = chip.closest('[data-chips]'), on = chip.getAttribute('aria-pressed') !== 'true';
+      if (grp.hasAttribute('data-single')) grp.querySelectorAll('.chip').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+      chip.setAttribute('aria-pressed', String(grp.hasAttribute('data-single') ? true : on));
+      if (grp.getAttribute('data-chips') === 'grades') {
+        var v = chip.getAttribute('data-val');
+        if (v === 'all' && on) grp.querySelectorAll('.chip:not([data-val="all"])').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+        if (v !== 'all' && on) grp.querySelector('[data-val="all"]').setAttribute('aria-pressed', 'false');
+      }
+      return;
+    }
+    var el = e.target.closest('[data-act]');
+    if (!el) return;
+    var act = el.getAttribute('data-act'), id = el.getAttribute('data-id');
+    if (act === 'close-bg' && e.target !== el) return;
+    switch (act) {
+      case 'pick': state.coord = id; store('tzmatim-coord', id); render(); window.scrollTo(0, 0); break;
+      case 'switch': state.coord = null; store('tzmatim-coord', ''); render(); break;
+      case 'rm-teacher':
+        var t = team(state.coord).slice(); t.splice(+el.getAttribute('data-i'), 1); saveTeam(state.coord, t); break;
+      case 'new-goal': editGoal(null); break;
+      case 'edit-goal': editGoal(state.data.goals.filter(function (x) { return x.id === id; })[0]); break;
+      case 'new-action': editAction(null); break;
+      case 'edit-action': editAction(state.data.actions.filter(function (x) { return x.id === id; })[0]); break;
+      case 'edit-district': editDistrict(); break;
+      case 'mode': state.boardMode = el.getAttribute('data-mode'); render(); break;
+      case 'grade': state.boardGrade = el.getAttribute('data-g'); render(); break;
+      case 'peek': peek(el.getAttribute('data-type'), id, el.getAttribute('data-coord')); break;
+      case 'logout': state.admin = false; render(); break;
+      case 'close': case 'close-bg': closeModal(); break;
+      case 'save':
+        var form = document.getElementById('mForm'), res = modalRoot._save(form);
+        if (res && typeof res === 'object') { var type = modalRoot._type; closeModal(); persist(type, res); }
+        break;
+      case 'delete':
+        if (el.getAttribute('data-confirm') !== '1') { el.setAttribute('data-confirm', '1'); el.textContent = 'בטוח? לחצי שוב למחיקה'; break; }
+        var d = modalRoot._delete(); closeModal();
+        state.data[d.type] = state.data[d.type].filter(function (x) { return x.id !== d.id; });
+        if (d.type === 'goals') state.data.actions.forEach(function (a) { a.goals = (a.goals || []).filter(function (g) { return g !== d.id; }); });
+        render(); setSync('מוחקת…');
+        api.remove(d.type, d.id).then(function () { setSync(IS_GAS ? 'נשמר' : 'נשמר בדפדפן הזה'); toast('נמחק'); })
+          .catch(function () { setSync('המחיקה נכשלה'); toast('המחיקה לא הצליחה. נסי שוב.'); });
+        break;
+    }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && state.modalOpen) closeModal();
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('.card.clickable')) { e.preventDefault(); e.target.click(); }
+  });
+  document.addEventListener('submit', function (e) {
+    var f = e.target.getAttribute('data-form');
+    if (!f) return;
+    e.preventDefault();
+    if (f === 'teacher') {
+      var inp = document.getElementById('newTeacher'), name = inp.value.trim();
+      if (!name) return;
+      var t = team(state.coord).slice();
+      if (t.indexOf(name) < 0) t.push(name);
+      saveTeam(state.coord, t);
+      setTimeout(function () { var n = document.getElementById('newTeacher'); if (n) n.focus(); }, 0);
+    }
+    if (f === 'admin') {
+      var code = document.getElementById('adminCode').value;
+      api.checkAdmin(code).then(function (ok) {
+        if (ok) { state.admin = true; render(); }
+        else document.getElementById('adminErr').textContent = 'הקוד לא נכון. נסי שוב.';
+      });
+    }
+  });
+
+  // ---------- boot ----------
+  function load(quiet) {
+    if (!quiet) setSync('טוענת…');
+    return api.getAll().then(function (d) {
+      state.data = { teams: d.teams || [], goals: d.goals || [], actions: d.actions || [], district: d.district || [] };
+      state.loaded = true;
+      setSync(IS_GAS ? 'מעודכן' : 'תצוגה לדוגמה');
+      if (!state.modalOpen) render();
+    }).catch(function (e) {
+      state.loaded = true; setSync('לא הצלחתי לטעון'); render(); console.error(e);
+    });
+  }
+  hydrateIcons(document);
+  if (!IS_GAS) document.getElementById('demoNote').hidden = false;
+  render();
+  load();
+  // רענון כל דקה, כדי לראות מה רכזות אחרות הוסיפו
+  if (IS_GAS) setInterval(function () { if (!state.modalOpen && !document.hidden) load(true); }, 60000);
+})();
+</script>
