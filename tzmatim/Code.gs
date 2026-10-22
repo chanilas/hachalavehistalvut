@@ -7,6 +7,9 @@
 // קוד הכניסה ל"מבט ניהולי" – אפשר לשנות לכל מספר שתרצי
 const ADMIN_CODE = '5787';
 
+// קוד הכניסה ל"נתוני הערכה" – לתת רק לרכזות ולמנהלת. בלי הקוד הסקריפט לא מחזיר שום ציון.
+const ASSESS_CODE = '2468';
+
 // כל סוג נתונים נשמר בלשונית משלו. העמודה האחרונה (json) היא מה שהכלי קורא; השאר בשבילך, לקריאה נוחה.
 const TABLES = {
   teams: {
@@ -41,6 +44,7 @@ function doGet(e) {
   // כשהדף יושב באתר, הוא מבקש מכאן נתונים
   if (p.action === 'getAll') return json(() => getAll());
   if (p.action === 'checkAdmin') return json(() => checkAdmin(p.code));
+  if (p.action === 'assessAll') return json(() => assessAll(p.code));
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('צמתים · תוכנית עבודה שנתית')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
@@ -53,6 +57,9 @@ function doPost(e) {
     const body = JSON.parse(e.postData.contents);
     if (body.action === 'save') return saveItem(body.type, body.obj);
     if (body.action === 'remove') return removeItem(body.type, body.id);
+    if (body.action === 'saveGrades') return saveGrades(body.code, body.cls, body.subject, body.half, body.entries);
+    if (body.action === 'saveClass') return saveClass(body.code, body.cls, body.names);
+    if (body.action === 'saveBands') return saveBands(body.code, body.bands);
     throw new Error('פעולה לא מוכרת');
   });
 }
@@ -163,4 +170,131 @@ function statusName(s) {
 function gradesText(g) {
   if (!g || !g.length) return '';
   return g.indexOf('all') > -1 ? 'כל השכבות' : g.join(', ');
+}
+
+// ================= נתוני הערכה =================
+// לשונית "ציונים": שורה לכל תלמידה, עמודה לכל תחום ומחצית.
+
+const SUBJECTS = [['kodesh', 'קודש'], ['hebrew', 'עברית'], ['english', 'אנגלית'], ['math', 'מתמטיקה']];
+const HALVES = [['a', 'מחצית א'], ['b', 'מחצית ב']];
+const GRADES_SHEET = 'ציונים';
+const SETTINGS_SHEET = 'הגדרות';
+const DEFAULT_BANDS = [0, 41, 61, 76, 90];
+
+function gradeHeaders() {
+  const h = ['מזהה', 'כיתה', 'שם'];
+  SUBJECTS.forEach(s => HALVES.forEach(hv => h.push(s[1] + ' – ' + hv[1])));
+  return h;
+}
+function gradeCol(subject, half) {
+  const si = SUBJECTS.findIndex(s => s[0] === subject), hi = HALVES.findIndex(h => h[0] === half);
+  if (si < 0 || hi < 0) throw new Error('תחום או מחצית לא מוכרים');
+  return 4 + si * 2 + hi; // מספר עמודה בגיליון
+}
+function gradesSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(GRADES_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(GRADES_SHEET);
+    sh.setRightToLeft(true);
+    const h = gradeHeaders();
+    sh.getRange(1, 1, 1, h.length).setValues([h]).setFontWeight('bold').setBackground('#2B2550').setFontColor('#FFFFFF');
+    sh.setFrozenRows(1);
+    sh.hideColumns(1);
+  }
+  return sh;
+}
+function requireCode(code, adminOnly) {
+  const c = String(code || '').trim();
+  if (c === ADMIN_CODE || (!adminOnly && c === ASSESS_CODE)) return;
+  throw new Error(adminOnly ? 'נדרש קוד ניהול' : 'קוד שגוי');
+}
+function readGradeRows() {
+  const sh = gradesSheet(), last = sh.getLastRow(), w = gradeHeaders().length;
+  return last < 2 ? [] : sh.getRange(2, 1, last - 1, w).getValues();
+}
+function getBands() {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SETTINGS_SHEET);
+  if (!sh) return DEFAULT_BANDS;
+  try { const b = JSON.parse(sh.getRange('B1').getValue()); return Array.isArray(b) && b.length === 5 ? b : DEFAULT_BANDS; }
+  catch (e) { return DEFAULT_BANDS; }
+}
+
+/** כל התלמידות, הציונים והמדרג */
+function assessAll(code) {
+  requireCode(code, false);
+  const students = readGradeRows().filter(r => r[0]).map(r => {
+    const g = {};
+    SUBJECTS.forEach((s, si) => {
+      g[s[0]] = {};
+      HALVES.forEach((h, hi) => {
+        const v = r[3 + si * 2 + hi];
+        g[s[0]][h[0]] = v === '' || v === null ? null : Number(v);
+      });
+    });
+    return { id: String(r[0]), cls: String(r[1]), name: String(r[2]), g: g };
+  });
+  return { students: students, bands: getBands(), admin: String(code).trim() === ADMIN_CODE };
+}
+
+/** הדבקת ציונים: entries = [{id, score}] (score ריק = מחיקת הציון) */
+function saveGrades(code, cls, subject, half, entries) {
+  requireCode(code, false);
+  const col = gradeCol(subject, half);
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const sh = gradesSheet(), last = sh.getLastRow();
+    if (last < 2) throw new Error('אין עדיין רשימות תלמידות');
+    const ids = sh.getRange(2, 1, last - 1, 1).getValues().map(r => String(r[0]));
+    const range = sh.getRange(2, col, last - 1, 1), vals = range.getValues();
+    (entries || []).forEach(e => {
+      const i = ids.indexOf(String(e.id));
+      if (i < 0) return;
+      const n = e.score === '' || e.score === null || e.score === undefined ? '' : Number(e.score);
+      vals[i][0] = n === '' || (isFinite(n) && n >= 0 && n <= 100) ? n : vals[i][0];
+    });
+    range.setValues(vals);
+  } finally {
+    lock.releaseLock();
+  }
+  return assessAll(code);
+}
+
+/** רשימת תלמידות לכיתה. תלמידה שכבר קיימת (לפי שם) שומרת את הציונים שלה. */
+function saveClass(code, cls, names) {
+  requireCode(code, true);
+  cls = String(cls || '').trim();
+  if (!cls) throw new Error('חסרה כיתה');
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const sh = gradesSheet(), w = gradeHeaders().length, rows = readGradeRows();
+    const others = rows.filter(r => String(r[1]) !== cls);
+    const mine = rows.filter(r => String(r[1]) === cls);
+    const key = n => String(n).replace(/\s+/g, ' ').trim();
+    const fresh = (names || []).map(key).filter(Boolean).map(n => {
+      const old = mine.find(r => key(r[2]) === n);
+      if (old) return old;
+      const row = new Array(w).fill('');
+      row[0] = Utilities.getUuid().slice(0, 8); row[1] = cls; row[2] = n;
+      return row;
+    });
+    const all = others.concat(fresh);
+    if (sh.getLastRow() > 1) sh.getRange(2, 1, sh.getLastRow() - 1, w).clearContent();
+    if (all.length) sh.getRange(2, 1, all.length, w).setValues(all);
+  } finally {
+    lock.releaseLock();
+  }
+  return assessAll(code);
+}
+
+/** גבולות המדרג: חמישה מספרים, הציון המינימלי של כל צבע */
+function saveBands(code, bands) {
+  requireCode(code, true);
+  if (!Array.isArray(bands) || bands.length !== 5) throw new Error('מדרג לא תקין');
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName(SETTINGS_SHEET) || ss.insertSheet(SETTINGS_SHEET);
+  sh.getRange('A1:B1').setValues([['מדרג ציונים', JSON.stringify(bands.map(Number))]]);
+  return assessAll(code);
 }

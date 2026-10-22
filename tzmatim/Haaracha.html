@@ -1,0 +1,599 @@
+<title>צמתים · נתוני הערכה</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Assistant:wght@400;600;700&display=swap">
+<style>
+[hidden] { display: none !important; }
+/* Layout: same world as the plan tool – header, segmented controls, then a grid of donuts and plain tables. */
+:root {
+  --bg: #F6F5FF; --surface: #FFFFFF; --ink: #2B2550; --muted: #6E6890; --line: #E4E1F4; --soft: #EEECFB;
+  --kodesh: #F2A31B; --hebrew: #EC4F86; --english: #4F86EE; --math: #1FAE78;
+  /* מדרג הציונים: אדום, כתום, ענבר, צהוב, ירוק */
+  --b0: #C9252F; --b1: #F07A1A; --b2: #F5AE24; --b3: #F2D41E; --b4: #2BA864;
+  --none: #D9D6EA; --bad: #E5484D; --ok: #1FAE78;
+  --display: "Fredoka", "Assistant", "Arial Hebrew", system-ui, sans-serif;
+  --body: "Assistant", "Arial Hebrew", system-ui, sans-serif;
+  --r-lg: 22px; --r-md: 14px;
+  --shadow: 0 1px 0 rgba(43,37,80,.04), 0 8px 24px -12px rgba(43,37,80,.18);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15132A; --surface: #211E3C; --ink: #F2F0FF; --muted: #ABA6CF; --line: #36325C; --soft: #2A2649;
+    --kodesh: #F7B544; --hebrew: #F46C9C; --english: #6E9CF5; --math: #3CC690;
+    --b0: #E5484D; --b1: #F7862F; --b2: #F8B735; --b3: #F5DC3A; --b4: #3CC17A; --none: #3A365F;
+    --shadow: 0 10px 28px -12px rgba(0,0,0,.6); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15132A; --surface: #211E3C; --ink: #F2F0FF; --muted: #ABA6CF; --line: #36325C; --soft: #2A2649;
+  --kodesh: #F7B544; --hebrew: #F46C9C; --english: #6E9CF5; --math: #3CC690;
+  --b0: #E5484D; --b1: #F7862F; --b2: #F8B735; --b3: #F5DC3A; --b4: #3CC17A; --none: #3A365F;
+  --shadow: 0 10px 28px -12px rgba(0,0,0,.6); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.5; direction: rtl; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--english) 60%, transparent); outline-offset: 2px; border-radius: 8px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; margin: 0; line-height: 1.2; text-wrap: balance; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+.hero { padding-block: 24px 6px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.logo { width: 54px; height: 54px; flex: none; }
+.hero h1 { font-size: clamp(1.8rem, 4.5vw, 2.5rem); font-weight: 700; }
+.hero p { margin: 0; color: var(--muted); }
+
+.bar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding-block: 14px 6px; position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 4; }
+.tabbar { display: flex; gap: 4px; padding: 4px; background: var(--soft); border-radius: 999px; max-width: 100%; overflow-x: auto; }
+.tab { border: 0; background: transparent; padding: 8px 15px; border-radius: 999px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.seg { display: inline-flex; gap: 3px; padding: 4px; background: var(--soft); border-radius: 999px; }
+.seg button { border: 0; background: transparent; padding: 6px 14px; border-radius: 999px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.sync { margin-inline-start: auto; color: var(--muted); font-size: .85rem; }
+
+main { padding-block: 8px 60px; }
+.title { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 26px 0 12px; }
+.title h2 { font-size: 1.4rem; }
+.hint { color: var(--muted); font-size: .92rem; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 14px; font-weight: 700; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip.cls { width: 46px; padding: 6px 0; text-align: center; font-family: var(--display); font-size: 1.05rem; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .88rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 4px; display: inline-block; flex: none; }
+
+/* donuts */
+.donuts { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.dcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.dcard header { display: flex; align-items: center; gap: 8px; font-family: var(--display); font-weight: 600; font-size: 1.1rem; }
+.dcard header i { width: 12px; height: 12px; border-radius: 50%; }
+.dbody { display: flex; align-items: center; gap: 14px; }
+.donut { width: 112px; height: 112px; flex: none; }
+.donut text { fill: var(--ink); font-family: var(--display); }
+.donut .sub { fill: var(--muted); font-family: var(--body); }
+.counts { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; font-size: .86rem; flex: 1; min-width: 0; }
+.counts li { display: flex; align-items: center; gap: 6px; }
+.counts b { font-variant-numeric: tabular-nums; min-width: 1.6em; }
+.counts .pct { color: var(--muted); font-variant-numeric: tabular-nums; }
+.dempty { color: var(--muted); font-size: .9rem; padding: 26px 0; text-align: center; }
+
+/* matrix */
+.scroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); }
+table { border-collapse: collapse; width: 100%; font-size: .93rem; }
+th, td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: start; vertical-align: middle; white-space: nowrap; }
+th { background: var(--soft); color: var(--muted); font-size: .84rem; font-weight: 700; position: sticky; top: 0; }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: center; font-variant-numeric: tabular-nums; }
+.matrix td { text-align: center; }
+.matrix td:first-child, .matrix th:first-child { text-align: start; font-family: var(--display); font-weight: 600; }
+.mcell { border: 0; background: transparent; display: inline-flex; align-items: center; gap: 8px; padding: 2px 6px; border-radius: 10px; }
+.mcell:hover { background: var(--soft); }
+.mcell svg { width: 44px; height: 44px; }
+.mcell b { font-variant-numeric: tabular-nums; font-size: 1rem; min-width: 2.4em; }
+.score { display: inline-block; min-width: 2.6em; text-align: center; padding: 2px 8px; border-radius: 8px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.score.s0 { background: color-mix(in srgb, var(--b0) 22%, var(--surface)); }
+.score.s1 { background: color-mix(in srgb, var(--b1) 24%, var(--surface)); }
+.score.s2 { background: color-mix(in srgb, var(--b2) 28%, var(--surface)); }
+.score.s3 { background: color-mix(in srgb, var(--b3) 34%, var(--surface)); }
+.score.s4 { background: color-mix(in srgb, var(--b4) 24%, var(--surface)); }
+.score.na { color: var(--muted); }
+.sortbtn { border: 0; background: none; color: inherit; font-weight: 700; padding: 0; text-decoration: underline dotted; }
+
+/* compare */
+.stack { display: flex; height: 26px; border-radius: 8px; overflow: hidden; gap: 2px; background: var(--surface); }
+.stack span { display: block; min-width: 0; }
+.cmp-row { display: grid; grid-template-columns: 90px 1fr; gap: 10px; align-items: center; }
+.cmp-row b { font-family: var(--display); font-weight: 600; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.kpis { display: flex; flex-wrap: wrap; gap: 10px; }
+.kpi { background: var(--soft); border-radius: var(--r-md); padding: 10px 16px; }
+.kpi b { display: block; font-family: var(--display); font-size: 1.6rem; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.kpi span { color: var(--muted); font-size: .86rem; }
+.up { color: var(--ok); font-weight: 700; }
+.down { color: var(--bad); font-weight: 700; }
+
+/* watch */
+.watch { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.wcard { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.wcard h3 { font-size: 1.05rem; }
+.wcard .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .9rem; }
+.tag { background: var(--soft); border-radius: 999px; padding: 2px 10px; font-size: .82rem; font-weight: 700; color: var(--muted); }
+
+/* paste */
+.paste-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 16px; align-items: start; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > span { font-weight: 700; }
+textarea { width: 100%; min-height: 300px; border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-md); padding: 12px; resize: vertical; font-variant-numeric: tabular-nums; }
+input[type="number"], input[type="password"], select { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 8px 10px; }
+.st-ok { color: var(--ok); font-weight: 700; }
+.st-miss { color: var(--muted); }
+.st-bad { color: var(--bad); font-weight: 700; }
+.btn { border: 0; border-radius: 999px; padding: 10px 22px; font-weight: 700; }
+.btn.primary { background: var(--ink); color: var(--bg); }
+.btn.ghost { background: transparent; border: 1px solid var(--line); }
+.btn:disabled { opacity: .45; cursor: default; }
+.actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.note { background: var(--soft); border-radius: var(--r-md); padding: 10px 14px; font-size: .92rem; }
+.warn { background: color-mix(in srgb, var(--b1) 14%, var(--surface)); border: 1px dashed var(--b1); border-radius: var(--r-md); padding: 10px 14px; font-size: .92rem; }
+
+.gate { max-width: 420px; margin: 40px auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 26px; display: flex; flex-direction: column; gap: 14px; text-align: center; }
+.gate input { text-align: center; font-size: 1.3rem; letter-spacing: 6px; padding: 10px; }
+.err { color: var(--bad); font-weight: 700; min-height: 1.3em; }
+.empty { text-align: center; padding: 30px 16px; color: var(--muted); background: var(--surface); border: 1px dashed var(--line); border-radius: var(--r-lg); }
+.bands { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.bands label { display: flex; align-items: center; gap: 8px; background: var(--soft); border-radius: var(--r-md); padding: 10px 12px; font-weight: 700; }
+.bands input { width: 70px; }
+.toast { position: fixed; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 10px 20px; border-radius: 999px; font-weight: 700; z-index: 30; }
+@media (max-width: 760px) { .paste-grid { grid-template-columns: 1fr; } textarea { min-height: 180px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
+      <g stroke="var(--line)" stroke-width="4" stroke-linecap="round"><line x1="32" y1="32" x2="12" y2="12"/><line x1="32" y1="32" x2="52" y2="12"/><line x1="32" y1="32" x2="12" y2="52"/><line x1="32" y1="32" x2="52" y2="52"/></g>
+      <circle cx="12" cy="12" r="9" fill="var(--kodesh)"/><circle cx="52" cy="12" r="9" fill="var(--hebrew)"/><circle cx="12" cy="52" r="9" fill="var(--english)"/><circle cx="52" cy="52" r="9" fill="var(--math)"/><circle cx="32" cy="32" r="8" fill="var(--ink)"/>
+    </svg>
+    <div><h1>נתוני הערכה</h1><p>מיפויים בתחומי הדעת · תשפ״ז</p></div>
+  </header>
+  <div class="bar" id="bar" hidden>
+    <div class="tabbar" role="tablist" id="tabs"></div>
+    <div class="seg" role="group" aria-label="מחצית" id="halfSeg"></div>
+    <span class="sync" id="sync"></span>
+  </div>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+  // קישור ה-exec של הסקריפט
+  var API_URL = '';
+
+  var SUBJECTS = [
+    { id: 'kodesh', name: 'קודש', color: 'var(--kodesh)' },
+    { id: 'hebrew', name: 'עברית', color: 'var(--hebrew)' },
+    { id: 'english', name: 'אנגלית', color: 'var(--english)' },
+    { id: 'math', name: 'מתמטיקה', color: 'var(--math)' }
+  ];
+  var CLASSES = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח'];
+  var HALVES = [{ id: 'a', name: 'מחצית א׳' }, { id: 'b', name: 'מחצית ב׳' }];
+  var BAND_NAMES = ['אדום', 'כתום', 'ענבר', 'צהוב', 'ירוק'];
+  var TABS = [
+    { id: 'overview', name: 'מבט על' }, { id: 'class', name: 'לפי כיתה' }, { id: 'subject', name: 'לפי תחום' },
+    { id: 'compare', name: 'השוואת מחציות' }, { id: 'watch', name: 'לשים עין' }, { id: 'paste', name: 'הדבקת ציונים' },
+    { id: 'admin', name: 'רשימות ומדרג', admin: true }
+  ];
+
+  var state = {
+    code: null, admin: false, students: [], bands: [0, 41, 61, 76, 90],
+    tab: 'overview', half: 'a', cls: 'א', subject: 'kodesh', sort: 'name',
+    cmpSubject: 'all', watchOrange: false,
+    paste: { cls: 'א', subject: 'kodesh', half: 'a', text: '', manual: {} }
+  };
+
+  // ---------- helpers ----------
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function store(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); if (v === null) sessionStorage.removeItem(k); else sessionStorage.setItem(k, v); } catch (e) { return null; } }
+  function subj(id) { return SUBJECTS.filter(function (s) { return s.id === id; })[0]; }
+  function band(score) { if (score == null) return -1; var b = 0; for (var i = 0; i < 5; i++) if (score >= state.bands[i]) b = i; return b; }
+  function mean(arr) { var v = arr.filter(function (x) { return x != null && !isNaN(x); }); return v.length ? v.reduce(function (a, b) { return a + b; }, 0) / v.length : null; }
+  function fmt(n) { return n == null ? '–' : (Math.round(n * 10) / 10).toString(); }
+  function scoreChip(n) { var b = band(n); return '<span class="score ' + (b < 0 ? 'na' : 's' + b) + '">' + fmt(n) + '</span>'; }
+  function grade(st, s, h) { return st.g && st.g[s] ? st.g[s][h] : null; }
+  function studentAvg(st, h) { return mean(SUBJECTS.map(function (s) { return grade(st, s.id, h); })); }
+  function inClass(c) { return state.students.filter(function (s) { return s.cls === c; }); }
+  function counts(scores) { var c = [0, 0, 0, 0, 0]; scores.forEach(function (x) { var b = band(x); if (b >= 0) c[b]++; }); return c; }
+  function classLabel(c) { return 'כיתה ' + c + '׳'; }
+
+  // ---------- api ----------
+  function remote(res) { return res.json().then(function (j) { if (!j.ok) throw new Error(j.error || 'שגיאה'); return j.data; }); }
+  function apiGet(params) {
+    var q = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
+    return fetch(API_URL + '?' + q).then(remote);
+  }
+  function apiPost(body) { return fetch(API_URL, { method: 'POST', body: JSON.stringify(body) }).then(remote); }
+  function apply(d) { state.students = d.students || []; state.bands = d.bands || state.bands; state.admin = !!d.admin; }
+
+  var syncEl = document.getElementById('sync'), toastEl = document.getElementById('toast'), toastT;
+  toastEl.hidden = true;
+  function toast(t) { toastEl.textContent = t; toastEl.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { toastEl.hidden = true; }, 2400); }
+
+  // ---------- donut ----------
+  // טבעת: מקטע לכל צבע במדרג, עם רווח קטן בין מקטעים; הממוצע במרכז
+  function donut(scores, size, center) {
+    var c = counts(scores), total = c.reduce(function (a, b) { return a + b; }, 0);
+    var r = 40, C = 2 * Math.PI * r, gap = total > 1 && c.filter(Boolean).length > 1 ? 1.6 : 0, off = 0, segs = '';
+    if (!total) segs = '<circle cx="50" cy="50" r="' + r + '" fill="none" stroke="var(--none)" stroke-width="14"/>';
+    for (var i = 0; i < 5; i++) {
+      if (!c[i]) continue;
+      var len = c[i] / total * C;
+      segs += '<circle cx="50" cy="50" r="' + r + '" fill="none" stroke="var(--b' + i + ')" stroke-width="14" stroke-dasharray="' + Math.max(len - gap, 0.01) + ' ' + C + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 50 50)">' +
+        '<title>' + BAND_NAMES[i] + ': ' + c[i] + ' תלמידות (' + Math.round(c[i] / total * 100) + '%)</title></circle>';
+      off += len;
+    }
+    var mid = center ? '<text x="50" y="' + (size > 60 ? 50 : 56) + '" text-anchor="middle" font-size="' + (size > 60 ? 22 : 26) + '" font-weight="600">' + center + '</text>' +
+      (size > 60 ? '<text class="sub" x="50" y="66" text-anchor="middle" font-size="10">ממוצע</text>' : '') : '';
+    return '<svg class="donut" viewBox="0 0 100 100" style="width:' + size + 'px;height:' + size + 'px" role="img" aria-label="' +
+      c.map(function (n, i) { return BAND_NAMES[i] + ' ' + n; }).join(', ') + '">' + segs + (size > 60 ? mid : '') + '</svg>';
+  }
+  function countList(scores) {
+    var c = counts(scores), total = c.reduce(function (a, b) { return a + b; }, 0);
+    return '<ul class="counts">' + c.map(function (n, i) {
+      return '<li><span class="sw" style="background:var(--b' + i + ')"></span><b>' + n + '</b>' + BAND_NAMES[i] + '<span class="pct">' + (total ? Math.round(n / total * 100) + '%' : '') + '</span></li>';
+    }).reverse().join('') + '</ul>';
+  }
+  function dcard(title, color, scores, extra) {
+    var avg = mean(scores), has = scores.some(function (x) { return x != null; });
+    return '<article class="dcard"><header>' + (color ? '<i style="background:' + color + '"></i>' : '') + title + '</header>' +
+      (has ? '<div class="dbody">' + donut(scores, 112, fmt(avg)) + countList(scores) + '</div>' : '<div class="dempty">עוד אין ציונים</div>') +
+      (extra || '') + '</article>';
+  }
+  function legend() {
+    var b = state.bands;
+    return '<div class="legend">' + BAND_NAMES.map(function (n, i) {
+      return '<span><span class="sw" style="background:var(--b' + i + ')"></span>' + n + ' ' + b[i] + '–' + (i < 4 ? b[i + 1] - 1 : 100) + '</span>';
+    }).join('') + '</div>';
+  }
+
+  // ---------- views ----------
+  var main = document.getElementById('main');
+  function render() {
+    if (!state.code) { main.innerHTML = gate(); document.getElementById('bar').hidden = true; return; }
+    document.getElementById('bar').hidden = false;
+    document.getElementById('tabs').innerHTML = TABS.filter(function (t) { return !t.admin || state.admin; }).map(function (t) {
+      return '<button class="tab" role="tab" data-tab="' + t.id + '" aria-selected="' + (t.id === state.tab) + '">' + t.name + '</button>';
+    }).join('');
+    var showHalf = ['overview', 'class', 'subject', 'watch'].indexOf(state.tab) > -1;
+    document.getElementById('halfSeg').hidden = !showHalf;
+    document.getElementById('halfSeg').innerHTML = HALVES.map(function (h) { return '<button data-half="' + h.id + '" aria-pressed="' + (h.id === state.half) + '">' + h.name + '</button>'; }).join('');
+    if (!state.students.length && state.tab !== 'admin') {
+      main.innerHTML = '<div class="empty" style="margin-top:24px">עוד לא הוזנו רשימות תלמידות.' + (state.admin ? ' אפשר להוסיף אותן בלשונית "רשימות ומדרג".' : ' המנהלת או המלווה מזינות אותן פעם אחת.') + '</div>';
+      return;
+    }
+    var v = { overview: overview, class: byClass, subject: bySubject, compare: compare, watch: watch, paste: paste, admin: admin }[state.tab];
+    main.innerHTML = v();
+    if (state.tab === 'paste') updatePreview();
+  }
+
+  function gate() {
+    if (!API_URL) return '<div class="gate"><h2>חסר קישור</h2><p>צריך להדביק בקוד את קישור ה-exec של הסקריפט.</p></div>';
+    return '<form class="gate" id="gateForm"><h2>כניסה לנתוני ההערכה</h2><p style="margin:0;color:var(--muted)">הנתונים מוגנים בקוד.</p>' +
+      '<label for="code" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">קוד</label><input id="code" type="password" inputmode="numeric" autocomplete="off" placeholder="קוד">' +
+      '<div class="err" id="gateErr"></div><button class="btn primary" type="submit">כניסה</button></form>';
+  }
+
+  function overview() {
+    var h = state.half;
+    var html = '<div class="title"><h2>כל הכיתות, כל התחומים</h2>' + legend() + '</div>' +
+      '<div class="scroll"><table class="matrix"><thead><tr><th>כיתה</th>' + SUBJECTS.map(function (s) { return '<th>' + s.name + '</th>'; }).join('') + '<th>ממוצע כיתתי</th></tr></thead><tbody>';
+    CLASSES.forEach(function (c) {
+      var st = inClass(c); if (!st.length) return;
+      html += '<tr><td>' + classLabel(c) + '</td>' + SUBJECTS.map(function (s) {
+        var sc = st.map(function (x) { return grade(x, s.id, h); });
+        return '<td><button class="mcell" data-goto="class" data-cls="' + c + '" title="' + classLabel(c) + ' · ' + s.name + '">' + donut(sc, 44) + '<b>' + fmt(mean(sc)) + '</b></button></td>';
+      }).join('') + '<td class="num">' + scoreChip(mean(st.map(function (x) { return studentAvg(x, h); }))) + '</td></tr>';
+    });
+    html += '<tr><td>כל בית הספר</td>' + SUBJECTS.map(function (s) {
+      var sc = state.students.map(function (x) { return grade(x, s.id, h); });
+      return '<td><span class="mcell">' + donut(sc, 44) + '<b>' + fmt(mean(sc)) + '</b></span></td>';
+    }).join('') + '<td class="num">' + scoreChip(mean(state.students.map(function (x) { return studentAvg(x, h); }))) + '</td></tr></tbody></table></div>' +
+      '<p class="hint">לחיצה על עיגול פותחת את הכיתה. ריחוף מעל צבע מראה כמה תלמידות בו.</p>';
+    return html;
+  }
+
+  function classPicker() {
+    return '<div class="chips" role="group" aria-label="כיתה">' + CLASSES.map(function (c) {
+      return '<button class="chip cls" data-cls="' + c + '" aria-pressed="' + (c === state.cls) + '">' + c + '</button>';
+    }).join('') + '</div>';
+  }
+  function subjectPicker(key, withAll) {
+    var list = (withAll ? [{ id: 'all', name: 'ממוצע כל התחומים' }] : []).concat(SUBJECTS);
+    return '<div class="chips" role="group" aria-label="תחום">' + list.map(function (s) {
+      return '<button class="chip" data-' + key + '="' + s.id + '" aria-pressed="' + (s.id === state[key === 'subj' ? 'subject' : 'cmpSubject']) + '">' + s.name + '</button>';
+    }).join('') + '</div>';
+  }
+
+  function byClass() {
+    var h = state.half, st = inClass(state.cls).slice();
+    var html = '<div class="title"><h2>' + classLabel(state.cls) + ' בכל התחומים</h2>' + classPicker() + '</div>';
+    if (!st.length) return html + '<div class="empty">אין תלמידות בכיתה הזו.</div>';
+    html += '<div class="donuts">' + SUBJECTS.map(function (s) { return dcard(s.name, s.color, st.map(function (x) { return grade(x, s.id, h); })); }).join('') + '</div>';
+    if (state.sort === 'avg') st.sort(function (a, b) { var x = studentAvg(a, h), y = studentAvg(b, h); return (x == null) - (y == null) || (x - y); });
+    html += '<div class="title"><h2>התלמידות</h2>' + legend() + '</div><div class="scroll"><table><thead><tr>' +
+      '<th><button class="sortbtn" data-sort="name">שם</button></th>' + SUBJECTS.map(function (s) { return '<th class="num">' + s.name + '</th>'; }).join('') +
+      '<th class="num"><button class="sortbtn" data-sort="avg">ממוצע אישי</button></th></tr></thead><tbody>' +
+      st.map(function (x) {
+        return '<tr><td>' + esc(x.name) + '</td>' + SUBJECTS.map(function (s) { return '<td class="num">' + scoreChip(grade(x, s.id, h)) + '</td>'; }).join('') +
+          '<td class="num">' + scoreChip(studentAvg(x, h)) + '</td></tr>';
+      }).join('') +
+      '<tr><td><b>ממוצע כיתתי</b></td>' + SUBJECTS.map(function (s) { return '<td class="num">' + scoreChip(mean(st.map(function (x) { return grade(x, s.id, h); }))) + '</td>'; }).join('') +
+      '<td class="num">' + scoreChip(mean(st.map(function (x) { return studentAvg(x, h); }))) + '</td></tr></tbody></table></div>';
+    return html;
+  }
+
+  function bySubject() {
+    var h = state.half, s = subj(state.subject);
+    var html = '<div class="title"><h2>' + s.name + ' בכל הכיתות</h2>' + subjectPicker('subj') + '</div><div class="donuts">';
+    html += CLASSES.filter(function (c) { return inClass(c).length; }).map(function (c) {
+      return dcard(classLabel(c), null, inClass(c).map(function (x) { return grade(x, s.id, h); }));
+    }).join('') + dcard('כל בית הספר', s.color, state.students.map(function (x) { return grade(x, s.id, h); })) + '</div>';
+    return html;
+  }
+
+  function cmpValue(x, h) { return state.cmpSubject === 'all' ? studentAvg(x, h) : grade(x, state.cmpSubject, h); }
+  function stackBar(scores) {
+    var c = counts(scores), t = c.reduce(function (a, b) { return a + b; }, 0);
+    if (!t) return '<div class="stack"><span style="flex:1;background:var(--none)"></span></div>';
+    return '<div class="stack">' + c.map(function (n, i) {
+      return n ? '<span style="flex:' + n + ';background:var(--b' + i + ')" title="' + BAND_NAMES[i] + ': ' + n + '"></span>' : '';
+    }).join('') + '</div>';
+  }
+  function compare() {
+    var st = inClass(state.cls);
+    var html = '<div class="title"><h2>השוואת מחציות · ' + classLabel(state.cls) + '</h2>' + classPicker() + '</div>' + subjectPicker('cmp', true);
+    if (!st.length) return html + '<div class="empty">אין תלמידות בכיתה הזו.</div>';
+    var A = st.map(function (x) { return cmpValue(x, 'a'); }), B = st.map(function (x) { return cmpValue(x, 'b'); });
+    var up = 0, down = 0, same = 0;
+    st.forEach(function (x, i) { if (A[i] == null || B[i] == null) return; var d = band(B[i]) - band(A[i]); if (d > 0) up++; else if (d < 0) down++; else same++; });
+    var ma = mean(A), mb = mean(B), delta = ma != null && mb != null ? mb - ma : null;
+    html += '<div class="panel" style="margin-top:14px"><div class="kpis">' +
+      '<div class="kpi"><b>' + fmt(ma) + ' ← ' + fmt(mb) + '</b><span>ממוצע כיתתי' + (delta != null ? ' (' + (delta >= 0 ? '+' : '') + fmt(delta) + ')' : '') + '</span></div>' +
+      '<div class="kpi"><b class="up">' + up + '</b><span>עלו בצבע</span></div><div class="kpi"><b class="down">' + down + '</b><span>ירדו בצבע</span></div>' +
+      '<div class="kpi"><b>' + same + '</b><span>נשארו באותו צבע</span></div></div>' +
+      '<div class="cmp-row"><b>מחצית א׳</b>' + stackBar(A) + '</div><div class="cmp-row"><b>מחצית ב׳</b>' + stackBar(B) + '</div>' + legend() + '</div>';
+    var rows = st.map(function (x, i) { return { x: x, a: A[i], b: B[i], d: A[i] != null && B[i] != null ? B[i] - A[i] : null }; });
+    rows.sort(function (p, q) { return (p.d == null) - (q.d == null) || (p.d - q.d); });
+    html += '<div class="title"><h2>לפי תלמידה</h2><span class="hint">מהירידה הגדולה לעלייה הגדולה</span></div><div class="scroll"><table><thead><tr><th>שם</th><th class="num">מחצית א׳</th><th class="num">מחצית ב׳</th><th class="num">שינוי</th></tr></thead><tbody>' +
+      rows.map(function (r) {
+        var d = r.d == null ? '–' : '<span class="' + (r.d > 0 ? 'up' : r.d < 0 ? 'down' : '') + '">' + (r.d > 0 ? '+' : '') + fmt(r.d) + '</span>';
+        return '<tr><td>' + esc(r.x.name) + '</td><td class="num">' + scoreChip(r.a) + '</td><td class="num">' + scoreChip(r.b) + '</td><td class="num">' + d + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+    return html;
+  }
+
+  function watch() {
+    var h = state.half, maxBand = state.watchOrange ? 1 : 0;
+    var list = state.students.map(function (x) {
+      var low = SUBJECTS.filter(function (s) { var b = band(grade(x, s.id, h)); return b >= 0 && b <= maxBand; });
+      return { x: x, low: low };
+    }).filter(function (r) { return r.low.length >= 2; });
+    list.sort(function (a, b) { return b.low.length - a.low.length || CLASSES.indexOf(a.x.cls) - CLASSES.indexOf(b.x.cls); });
+    var html = '<div class="title"><h2>תלמידות שצריך לשים עליהן עין</h2>' +
+      '<div class="seg" role="group"><button data-watch="red" aria-pressed="' + !state.watchOrange + '">באדום ב-2 תחומים ומעלה</button>' +
+      '<button data-watch="orange" aria-pressed="' + state.watchOrange + '">כולל כתום</button></div></div>';
+    html += list.length ? '<div class="watch">' + list.map(function (r) {
+      return '<article class="wcard"><h3>' + esc(r.x.name) + ' <span class="tag">' + classLabel(r.x.cls) + '</span></h3><div class="row">' +
+        r.low.map(function (s) { return s.name + ' ' + scoreChip(grade(r.x, s.id, h)); }).join(' · ') + '</div>' +
+        '<div class="row"><span class="hint">ממוצע אישי</span>' + scoreChip(studentAvg(r.x, h)) + '</div></article>';
+    }).join('') + '</div>' : '<div class="empty">אין תלמידות שעונות על התנאי במחצית הזו.</div>';
+    var drops = state.students.map(function (x) { var a = studentAvg(x, 'a'), b = studentAvg(x, 'b'); return { x: x, a: a, b: b, d: a != null && b != null ? b - a : null }; })
+      .filter(function (r) { return r.d != null && r.d <= -10; }).sort(function (p, q) { return p.d - q.d; });
+    if (drops.length) {
+      html += '<div class="title"><h2>ירידה של 10 נקודות ומעלה בממוצע האישי</h2><span class="hint">ממחצית א׳ למחצית ב׳</span></div><div class="watch">' + drops.map(function (r) {
+        return '<article class="wcard"><h3>' + esc(r.x.name) + ' <span class="tag">' + classLabel(r.x.cls) + '</span></h3><div class="row">' + scoreChip(r.a) + ' ← ' + scoreChip(r.b) +
+          ' <span class="down">' + fmt(r.d) + '</span></div></article>';
+      }).join('') + '</div>';
+    }
+    return html;
+  }
+
+  // ---------- paste ----------
+  function norm(s) { return String(s).replace(/["'״׳`.,\-–()]/g, ' ').replace(/\s+/g, ' ').trim(); }
+  function words(s) { return norm(s).split(' ').filter(Boolean); }
+  function parseLines(text) {
+    return text.split(/\r?\n/).map(function (line) {
+      var raw = line.trim(); if (!raw) return null;
+      var cells = raw.indexOf('\t') > -1 ? raw.split('\t') : [raw];
+      var num = null, name = [];
+      cells.forEach(function (cell) {
+        var c = cell.trim(); if (!c) return;
+        var m = c.replace('%', '').match(/^\d{1,3}(\.\d+)?$/);
+        if (m && num === null && +c.replace('%', '') <= 100) num = +c.replace('%', '');
+        else if (cells.length === 1) {
+          var mm = c.match(/^(.*?)[\s:]+(\d{1,3}(?:\.\d+)?)%?$/) || c.match(/^(\d{1,3}(?:\.\d+)?)%?[\s:]+(.*)$/);
+          if (mm) { var a = /^\d/.test(mm[1]) ? mm[1] : mm[2], b = /^\d/.test(mm[1]) ? mm[2] : mm[1]; if (+a <= 100) { num = +a; name.push(b); } else name.push(c); }
+          else name.push(c);
+        } else if (!/^\d+$/.test(c)) name.push(c);
+      });
+      return { raw: raw, name: name.join(' ').trim(), score: num };
+    }).filter(Boolean).filter(function (l) { return l.name || l.score !== null; });
+  }
+  function matchStudent(name, students) {
+    var n = norm(name); if (!n) return null;
+    var exact = students.filter(function (s) { return norm(s.name) === n; });
+    if (exact.length === 1) return exact[0];
+    var w = words(name).sort().join(' ');
+    var set = students.filter(function (s) { return words(s.name).sort().join(' ') === w; });
+    if (set.length === 1) return set[0];
+    var ww = words(name);
+    var part = students.filter(function (s) { var sw = words(s.name); return ww.every(function (x) { return sw.indexOf(x) > -1; }); });
+    return part.length === 1 ? part[0] : null;
+  }
+  function computePaste() {
+    var p = state.paste, st = inClass(p.cls), lines = parseLines(p.text);
+    var result = {}, unmatched = [], mode = 'names';
+    var onlyNums = lines.length && lines.every(function (l) { return !l.name && l.score !== null; });
+    if (onlyNums) {
+      mode = lines.length === st.length ? 'order' : 'badcount';
+      if (mode === 'order') st.forEach(function (s, i) { result[s.id] = lines[i].score; });
+    } else {
+      lines.forEach(function (l, i) {
+        if (l.score === null) return;
+        var s = p.manual[i] ? st.filter(function (x) { return x.id === p.manual[i]; })[0] : matchStudent(l.name, st);
+        if (s) result[s.id] = l.score; else unmatched.push({ i: i, l: l });
+      });
+    }
+    return { st: st, result: result, unmatched: unmatched, mode: mode, lines: lines };
+  }
+  function paste() {
+    var p = state.paste;
+    var sel = function (id, opts, v) { return '<select id="' + id + '">' + opts.map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === v ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>'; };
+    return '<div class="title"><h2>הדבקת ציונים</h2><span class="hint">מעתיקים מאקסל עמודה של שמות ועמודה של ציונים, ומדביקים. הכלי משייך כל ציון לתלמידה לפי השם.</span></div>' +
+      '<div class="actions" style="margin-bottom:14px">' + sel('pCls', CLASSES.map(function (c) { return [c, classLabel(c)]; }), p.cls) +
+      sel('pSubj', SUBJECTS.map(function (s) { return [s.id, s.name]; }), p.subject) + sel('pHalf', HALVES.map(function (h) { return [h.id, h.name]; }), p.half) + '</div>' +
+      '<div class="paste-grid"><label class="field"><span>הדביקי כאן</span><textarea id="pText" placeholder="שם תלמידה    ציון&#10;שם תלמידה    ציון">' + esc(p.text) + '</textarea></label>' +
+      '<div class="field"><span>מה ייכנס</span><div id="pPreview"></div></div></div>';
+  }
+  function updatePreview() {
+    var el = document.getElementById('pPreview'); if (!el) return;
+    var r = computePaste(), p = state.paste, matched = Object.keys(r.result).length;
+    var html = '';
+    if (!r.lines.length) html += '<div class="note">אחרי ההדבקה יופיע כאן לאיזו תלמידה נכנס כל ציון, לפני השמירה.</div>';
+    if (r.mode === 'order') html += '<div class="note">הודבקו רק ציונים, בלי שמות. הם ישויכו לפי סדר הרשימה של הכיתה. כדאי לוודא שהסדר זהה.</div>';
+    if (r.mode === 'badcount') html += '<div class="warn">הודבקו ' + r.lines.length + ' ציונים בלי שמות, אבל בכיתה ' + r.st.length + ' תלמידות. הדביקי גם את עמודת השמות.</div>';
+    if (r.unmatched.length) {
+      html += '<div class="warn"><b>' + r.unmatched.length + ' שורות לא שויכו.</b> בחרי לאיזו תלמידה שייך כל ציון:</div><div class="scroll"><table><tbody>' +
+        r.unmatched.map(function (u) {
+          return '<tr><td>' + esc(u.l.name || u.l.raw) + '</td><td class="num">' + scoreChip(u.l.score) + '</td><td><select data-manual="' + u.i + '"><option value="">בחרי תלמידה…</option>' +
+            r.st.map(function (s) { return '<option value="' + s.id + '"' + (p.manual[u.i] === s.id ? ' selected' : '') + '>' + esc(s.name) + '</option>'; }).join('') + '</select></td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    if (r.lines.length) {
+      var cur = function (s) { return grade(s, p.subject, p.half); };
+      html += '<div class="scroll"><table><thead><tr><th>תלמידה</th><th class="num">קיים</th><th class="num">חדש</th></tr></thead><tbody>' +
+        r.st.map(function (s) {
+          var v = r.result[s.id];
+          return '<tr><td>' + esc(s.name) + '</td><td class="num">' + scoreChip(cur(s)) + '</td><td class="num">' + (v === undefined ? '<span class="st-miss">לא הודבק</span>' : scoreChip(v)) + '</td></tr>';
+        }).join('') + '</tbody></table></div>';
+    }
+    html += '<div class="actions" style="margin-top:10px"><button class="btn primary" id="pSave"' + (matched ? '' : ' disabled') + '>שמירת ' + matched + ' ציונים</button>' +
+      '<span class="hint">' + subj(p.subject).name + ' · ' + classLabel(p.cls) + ' · ' + HALVES.filter(function (h) { return h.id === p.half; })[0].name + '</span></div>';
+    el.innerHTML = html;
+  }
+
+  // ---------- admin ----------
+  function admin() {
+    var b = state.bands;
+    return '<div class="title"><h2>מדרג הציונים</h2><span class="hint">הציון הנמוך ביותר בכל צבע</span></div><div class="panel"><div class="bands">' +
+      BAND_NAMES.map(function (n, i) {
+        return '<label><span class="sw" style="background:var(--b' + i + ')"></span>' + n + ' מ-' + (i === 0 ? ' 0' : '<input type="number" min="1" max="100" id="band' + i + '" value="' + b[i] + '">') + '</label>';
+      }).join('') + '</div><div class="actions"><button class="btn primary" data-act="saveBands">שמירת המדרג</button></div></div>' +
+      '<div class="title"><h2>רשימות תלמידות</h2><span class="hint">שם אחד בכל שורה. תלמידה שכבר יש לה ציונים שומרת אותם, כל עוד השם לא משתנה.</span></div>' +
+      '<div class="panel"><div class="note">אפשר להדביק כאן את כל הרשימות בבת אחת, למשל ישר מקובץ הוורד. שורה כמו "כתה א׳" פותחת כיתה, וכל השורות שאחריה הן שמות התלמידות שלה.</div>' +
+      '<textarea id="bulk" style="min-height:220px" placeholder="כתה א&#39;&#10;שם תלמידה&#10;שם תלמידה&#10;&#10;כתה ב&#39;&#10;…"></textarea>' +
+      '<div class="actions"><button class="btn ghost" data-act="bulkCheck">בדיקה</button><span id="bulkInfo" class="hint"></span><button class="btn primary" data-act="bulkSave" id="bulkSave" disabled>שמירת הרשימות</button></div></div>' +
+      '<div class="title"><h2>עריכת כיתה אחת</h2>' + classPicker() + '</div><div class="panel">' +
+      '<textarea id="oneClass" style="min-height:240px">' + esc(inClass(state.cls).map(function (s) { return s.name; }).join('\n')) + '</textarea>' +
+      '<div class="actions"><button class="btn primary" data-act="saveOne">שמירת ' + classLabel(state.cls) + '</button><span class="hint">מחיקת שם מוחקת גם את הציונים של התלמידה.</span></div></div>';
+  }
+  var bulkParsed = null;
+  function parseBulk(text) {
+    var out = {}, cur = null;
+    text.split(/\r?\n/).forEach(function (line) {
+      var cells = line.split('\t').map(function (c) { return c.trim(); }).filter(Boolean);
+      var t = cells.join(' ');
+      var m = t.match(/כי?תה\s*([א-ח])/);
+      if (m && t.replace(/בס"?ד/, '').trim().length <= 12) { cur = m[1]; out[cur] = out[cur] || []; return; }
+      if (!cur) return;
+      var name = cells.filter(function (c) { return !/^[\d.\s]+$/.test(c); }).join(' ').trim();
+      if (!name || /^(שם תלמידה|שם|בס"?ד|\.+)$/.test(name)) return;
+      out[cur].push(name);
+    });
+    return out;
+  }
+
+  // ---------- events ----------
+  function busy(t) { syncEl.textContent = t; }
+  function run(promise, okMsg) {
+    busy('שומרת…');
+    return promise.then(function (d) { apply(d); busy('נשמר'); toast(okMsg); render(); })
+      .catch(function (e) { busy('השמירה נכשלה'); toast(e.message || 'השמירה לא הצליחה. נסי שוב.'); });
+  }
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-tab],[data-half],[data-cls],[data-subj],[data-cmp],[data-sort],[data-watch],[data-goto],[data-act],#pSave');
+    if (!t) return;
+    if (t.dataset.tab) { state.tab = t.dataset.tab; render(); return; }
+    if (t.dataset.half) { state.half = t.dataset.half; render(); return; }
+    if (t.dataset.goto) { state.tab = t.dataset.goto; state.cls = t.dataset.cls; render(); window.scrollTo(0, 0); return; }
+    if (t.dataset.cls) { state.cls = t.dataset.cls; render(); return; }
+    if (t.dataset.subj) { state.subject = t.dataset.subj; render(); return; }
+    if (t.dataset.cmp) { state.cmpSubject = t.dataset.cmp; render(); return; }
+    if (t.dataset.sort) { state.sort = t.dataset.sort; render(); return; }
+    if (t.dataset.watch) { state.watchOrange = t.dataset.watch === 'orange'; render(); return; }
+    if (t.id === 'pSave') {
+      var r = computePaste(), p = state.paste;
+      var entries = Object.keys(r.result).map(function (id) { return { id: id, score: r.result[id] }; });
+      t.disabled = true;
+      run(apiPost({ action: 'saveGrades', code: state.code, cls: p.cls, subject: p.subject, half: p.half, entries: entries }), 'נשמרו ' + entries.length + ' ציונים')
+        .then(function () { if (syncEl.textContent === 'נשמר') { state.paste.text = ''; state.paste.manual = {}; render(); } });
+      return;
+    }
+    var act = t.dataset.act;
+    if (act === 'saveBands') {
+      var nb = [0, 1, 2, 3, 4].map(function (i) { return i === 0 ? 0 : Number(document.getElementById('band' + i).value); });
+      for (var i = 1; i < 5; i++) if (!(nb[i] > nb[i - 1]) || nb[i] > 100) { toast('כל גבול צריך להיות גדול מהקודם, עד 100'); return; }
+      run(apiPost({ action: 'saveBands', code: state.code, bands: nb }), 'המדרג נשמר');
+    }
+    if (act === 'bulkCheck') {
+      bulkParsed = parseBulk(document.getElementById('bulk').value);
+      var keys = Object.keys(bulkParsed);
+      document.getElementById('bulkInfo').textContent = keys.length ? keys.map(function (k) { return k + '׳: ' + bulkParsed[k].length; }).join(' · ') : 'לא נמצאו כיתות. ודאי שיש שורה כמו "כתה א׳" לפני כל רשימה.';
+      document.getElementById('bulkSave').disabled = !keys.length;
+    }
+    if (act === 'bulkSave' && bulkParsed) {
+      var ks = Object.keys(bulkParsed), chain = Promise.resolve(), last = null;
+      busy('שומרת…');
+      ks.forEach(function (k) { chain = chain.then(function () { return apiPost({ action: 'saveClass', code: state.code, cls: k, names: bulkParsed[k] }).then(function (d) { last = d; }); }); });
+      chain.then(function () { apply(last); bulkParsed = null; busy('נשמר'); toast('נשמרו ' + ks.length + ' כיתות'); render(); })
+        .catch(function (e) { busy('השמירה נכשלה'); toast(e.message || 'השמירה לא הצליחה'); });
+    }
+    if (act === 'saveOne') {
+      var names = document.getElementById('oneClass').value.split(/\r?\n/).map(function (s) { return s.trim(); }).filter(Boolean);
+      run(apiPost({ action: 'saveClass', code: state.code, cls: state.cls, names: names }), classLabel(state.cls) + ' נשמרה');
+    }
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'pText') { state.paste.text = e.target.value; state.paste.manual = {}; updatePreview(); }
+  });
+  document.addEventListener('change', function (e) {
+    var id = e.target.id;
+    if (id === 'pCls') { state.paste.cls = e.target.value; state.paste.manual = {}; updatePreview(); }
+    if (id === 'pSubj') { state.paste.subject = e.target.value; updatePreview(); }
+    if (id === 'pHalf') { state.paste.half = e.target.value; updatePreview(); }
+    if (e.target.dataset.manual !== undefined) { state.paste.manual[e.target.dataset.manual] = e.target.value; updatePreview(); }
+  });
+  document.addEventListener('submit', function (e) {
+    if (e.target.id !== 'gateForm') return;
+    e.preventDefault();
+    var code = document.getElementById('code').value.trim(), err = document.getElementById('gateErr');
+    err.textContent = '';
+    apiGet({ action: 'assessAll', code: code }).then(function (d) { state.code = code; store('tz-assess', code); apply(d); busy('מעודכן'); render(); })
+      .catch(function (ex) { err.textContent = /קוד/.test(ex.message) ? 'הקוד לא נכון.' : 'לא הצלחתי להתחבר. נסי שוב.'; });
+  });
+
+  // ---------- boot ----------
+  var saved = store('tz-assess');
+  render();
+  if (saved && API_URL) {
+    busy('טוענת…');
+    apiGet({ action: 'assessAll', code: saved }).then(function (d) { state.code = saved; apply(d); busy('מעודכן'); render(); })
+      .catch(function () { store('tz-assess', null); busy(''); render(); });
+  }
+})();
+</script>
