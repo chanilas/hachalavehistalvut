@@ -36,11 +36,31 @@ const TABLES = {
   }
 };
 
-function doGet() {
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  // כשהדף יושב באתר, הוא מבקש מכאן נתונים
+  if (p.action === 'getAll') return json(() => getAll());
+  if (p.action === 'checkAdmin') return json(() => checkAdmin(p.code));
   return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('צמתים · תוכנית עבודה שנתית')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+
+/** שמירה ומחיקה כשהדף יושב באתר */
+function doPost(e) {
+  return json(() => {
+    const body = JSON.parse(e.postData.contents);
+    if (body.action === 'save') return saveItem(body.type, body.obj);
+    if (body.action === 'remove') return removeItem(body.type, body.id);
+    throw new Error('פעולה לא מוכרת');
+  });
+}
+
+function json(fn) {
+  let out;
+  try { out = { ok: true, data: fn() }; } catch (err) { out = { ok: false, error: String(err && err.message || err) }; }
+  return ContentService.createTextOutput(JSON.stringify(out)).setMimeType(ContentService.MimeType.JSON);
 }
 
 /** מחזיר את כל הנתונים לדף */

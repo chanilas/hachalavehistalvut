@@ -513,7 +513,10 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
 
   // ---------- data layer ----------
+  // כשהדף יושב באתר (Google Sites) ולא בתוך Apps Script: מדביקים כאן את קישור ה-exec של הסקריפט
+  var API_URL = '';
   var IS_GAS = typeof google !== 'undefined' && google.script && google.script.run;
+  var CONNECTED = !!(IS_GAS || API_URL);
   var DEMO_KEY = 'tzmatim-demo-v5';
 
   function gas(fn) {
@@ -523,11 +526,27 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
       r[fn].apply(r, args);
     });
   }
+  function remote(res) {
+    return res.json().then(function (j) { if (!j.ok) throw new Error(j.error || 'error'); return j.data; });
+  }
+  function apiGet(params) {
+    var q = Object.keys(params).map(function (k) { return k + '=' + encodeURIComponent(params[k]); }).join('&');
+    return fetch(API_URL + '?' + q).then(remote);
+  }
+  // גוף בטקסט פשוט, כדי שהדפדפן לא ישלח בקשת CORS מקדימה ש-Apps Script לא עונה עליה
+  function apiPost(body) {
+    return fetch(API_URL, { method: 'POST', body: JSON.stringify(body) }).then(remote);
+  }
   var api = IS_GAS ? {
     getAll: function () { return gas('getAll'); },
     save: function (t, o) { return gas('saveItem', t, o); },
     remove: function (t, id) { return gas('removeItem', t, id); },
     checkAdmin: function (c) { return gas('checkAdmin', c); }
+  } : API_URL ? {
+    getAll: function () { return apiGet({ action: 'getAll' }); },
+    save: function (t, o) { return apiPost({ action: 'save', type: t, obj: o }); },
+    remove: function (t, id) { return apiPost({ action: 'remove', type: t, id: id }); },
+    checkAdmin: function (c) { return apiGet({ action: 'checkAdmin', code: c }); }
   } : {
     getAll: function () {
       var raw = store(DEMO_KEY), d = null;
@@ -1088,7 +1107,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     upsert(type, obj); render();
     setSync('שומרת…');
     return api.save(type, obj).then(function (saved) {
-      upsert(type, saved || obj); setSync(IS_GAS ? 'נשמר' : 'נשמר בדפדפן הזה'); toast(msg || 'נשמר'); render();
+      upsert(type, saved || obj); setSync(CONNECTED ? 'נשמר' : 'נשמר בדפדפן הזה'); toast(msg || 'נשמר'); render();
     }).catch(function (e) {
       setSync('השמירה נכשלה'); toast('השמירה לא הצליחה. בדקי חיבור ונסי שוב.'); console.error(e);
     });
@@ -1162,7 +1181,7 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
         state.data[d.type] = state.data[d.type].filter(function (x) { return x.id !== d.id; });
         if (d.type === 'goals') state.data.actions.forEach(function (a) { a.goals = (a.goals || []).filter(function (g) { return g !== d.id; }); });
         render(); setSync('מוחקת…');
-        api.remove(d.type, d.id).then(function () { setSync(IS_GAS ? 'נשמר' : 'נשמר בדפדפן הזה'); toast('נמחק'); })
+        api.remove(d.type, d.id).then(function () { setSync(CONNECTED ? 'נשמר' : 'נשמר בדפדפן הזה'); toast('נמחק'); })
           .catch(function () { setSync('המחיקה נכשלה'); toast('המחיקה לא הצליחה. נסי שוב.'); });
         break;
     }
@@ -1198,17 +1217,17 @@ td.num { font-variant-numeric: tabular-nums; text-align: center; }
     return api.getAll().then(function (d) {
       state.data = { teams: d.teams || [], goals: d.goals || [], actions: d.actions || [], district: d.district || [] };
       state.loaded = true;
-      setSync(IS_GAS ? 'מעודכן' : 'תצוגה מקדימה');
+      setSync(CONNECTED ? 'מעודכן' : 'תצוגה מקדימה');
       if (!state.modalOpen) render();
     }).catch(function (e) {
       state.loaded = true; setSync('לא הצלחתי לטעון'); render(); console.error(e);
     });
   }
   hydrateIcons(document);
-  document.getElementById('demoNote').hidden = IS_GAS; document.getElementById('toast').hidden = true;
+  document.getElementById('demoNote').hidden = CONNECTED; document.getElementById('toast').hidden = true;
   render();
   load();
   // רענון כל דקה, כדי לראות מה רכזות אחרות הוסיפו
-  if (IS_GAS) setInterval(function () { if (!state.modalOpen && !document.hidden) load(true); }, 60000);
+  if (CONNECTED) setInterval(function () { if (!state.modalOpen && !document.hidden) load(true); }, 60000);
 })();
 </script>
