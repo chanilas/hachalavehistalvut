@@ -204,6 +204,7 @@ input[type="number"], input[type="password"], select { border: 1px solid var(--l
   function band(score) { if (score == null) return -1; var b = 0; for (var i = 0; i < 5; i++) if (score >= state.bands[i]) b = i; return b; }
   function mean(arr) { var v = arr.filter(function (x) { return x != null && !isNaN(x); }); return v.length ? v.reduce(function (a, b) { return a + b; }, 0) / v.length : null; }
   function fmt(n) { return n == null ? '–' : (Math.round(n * 10) / 10).toString(); }
+  function signed(n) { return '<span dir="ltr">' + (n > 0 ? '+' : '') + fmt(n) + '</span>'; }
   function scoreChip(n) { var b = band(n); return '<span class="score ' + (b < 0 ? 'na' : 's' + b) + '">' + fmt(n) + '</span>'; }
   function grade(st, s, h) { return st.g && st.g[s] ? st.g[s][h] : null; }
   function studentAvg(st, h) { return mean(SUBJECTS.map(function (s) { return grade(st, s.id, h); })); }
@@ -363,7 +364,7 @@ input[type="number"], input[type="password"], select { border: 1px solid var(--l
     st.forEach(function (x, i) { if (A[i] == null || B[i] == null) return; var d = band(B[i]) - band(A[i]); if (d > 0) up++; else if (d < 0) down++; else same++; });
     var ma = mean(A), mb = mean(B), delta = ma != null && mb != null ? mb - ma : null;
     html += '<div class="panel" style="margin-top:14px"><div class="kpis">' +
-      '<div class="kpi"><b>' + fmt(ma) + ' ← ' + fmt(mb) + '</b><span>ממוצע כיתתי' + (delta != null ? ' (' + (delta >= 0 ? '+' : '') + fmt(delta) + ')' : '') + '</span></div>' +
+      '<div class="kpi"><b>' + fmt(ma) + ' ← ' + fmt(mb) + '</b><span>ממוצע כיתתי' + (delta != null ? ' (' + signed(delta) + ')' : '') + '</span></div>' +
       '<div class="kpi"><b class="up">' + up + '</b><span>עלו בצבע</span></div><div class="kpi"><b class="down">' + down + '</b><span>ירדו בצבע</span></div>' +
       '<div class="kpi"><b>' + same + '</b><span>נשארו באותו צבע</span></div></div>' +
       '<div class="cmp-row"><b>מחצית א׳</b>' + stackBar(A) + '</div><div class="cmp-row"><b>מחצית ב׳</b>' + stackBar(B) + '</div>' + legend() + '</div>';
@@ -371,7 +372,7 @@ input[type="number"], input[type="password"], select { border: 1px solid var(--l
     rows.sort(function (p, q) { return (p.d == null) - (q.d == null) || (p.d - q.d); });
     html += '<div class="title"><h2>לפי תלמידה</h2><span class="hint">מהירידה הגדולה לעלייה הגדולה</span></div><div class="scroll"><table><thead><tr><th>שם</th><th class="num">מחצית א׳</th><th class="num">מחצית ב׳</th><th class="num">שינוי</th></tr></thead><tbody>' +
       rows.map(function (r) {
-        var d = r.d == null ? '–' : '<span class="' + (r.d > 0 ? 'up' : r.d < 0 ? 'down' : '') + '">' + (r.d > 0 ? '+' : '') + fmt(r.d) + '</span>';
+        var d = r.d == null ? '–' : '<span class="' + (r.d > 0 ? 'up' : r.d < 0 ? 'down' : '') + '">' + signed(r.d) + '</span>';
         return '<tr><td>' + esc(r.x.name) + '</td><td class="num">' + scoreChip(r.a) + '</td><td class="num">' + scoreChip(r.b) + '</td><td class="num">' + d + '</td></tr>';
       }).join('') + '</tbody></table></div>';
     return html;
@@ -397,7 +398,7 @@ input[type="number"], input[type="password"], select { border: 1px solid var(--l
     if (drops.length) {
       html += '<div class="title"><h2>ירידה של 10 נקודות ומעלה בממוצע האישי</h2><span class="hint">ממחצית א׳ למחצית ב׳</span></div><div class="watch">' + drops.map(function (r) {
         return '<article class="wcard"><h3>' + esc(r.x.name) + ' <span class="tag">' + classLabel(r.x.cls) + '</span></h3><div class="row">' + scoreChip(r.a) + ' ← ' + scoreChip(r.b) +
-          ' <span class="down">' + fmt(r.d) + '</span></div></article>';
+          ' <span class="down">' + signed(r.d) + '</span></div></article>';
       }).join('') + '</div>';
     }
     return html;
