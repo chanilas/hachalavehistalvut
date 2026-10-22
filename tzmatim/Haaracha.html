@@ -45,7 +45,9 @@ h1, h2, h3 { font-family: var(--display); font-weight: 600; margin: 0; line-heig
 .hero p { margin: 0; color: var(--muted); }
 
 .bar { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; padding-block: 14px 6px; position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 4; }
-.tabbar { display: flex; gap: 4px; padding: 4px; background: var(--soft); border-radius: 999px; max-width: 100%; overflow-x: auto; }
+.tabbar { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px; background: var(--soft); border-radius: 20px; max-width: 100%; }
+.who { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: .85rem; }
+.who button { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; font-weight: 700; color: var(--ink); }
 .tab { border: 0; background: transparent; padding: 8px 15px; border-radius: 999px; font-weight: 700; color: var(--muted); white-space: nowrap; }
 .tab[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
 .seg { display: inline-flex; gap: 3px; padding: 4px; background: var(--soft); border-radius: 999px; }
@@ -164,6 +166,7 @@ input[type="number"], input[type="password"], select { border: 1px solid var(--l
     <div class="tabbar" role="tablist" id="tabs"></div>
     <div class="seg" role="group" aria-label="מחצית" id="halfSeg"></div>
     <span class="sync" id="sync"></span>
+    <span class="who" id="who"></span>
   </div>
   <main id="main"></main>
 </div>
@@ -267,6 +270,7 @@ input[type="number"], input[type="password"], select { border: 1px solid var(--l
   function render() {
     if (!state.code) { main.innerHTML = gate(); document.getElementById('bar').hidden = true; return; }
     document.getElementById('bar').hidden = false;
+    document.getElementById('who').innerHTML = (state.admin ? 'כניסת ניהול' : 'כניסת רכזות') + '<button data-act="logout">החלפת קוד</button>';
     document.getElementById('tabs').innerHTML = TABS.filter(function (t) { return !t.admin || state.admin; }).map(function (t) {
       return '<button class="tab" role="tab" data-tab="' + t.id + '" aria-selected="' + (t.id === state.tab) + '">' + t.name + '</button>';
     }).join('');
@@ -274,7 +278,7 @@ input[type="number"], input[type="password"], select { border: 1px solid var(--l
     document.getElementById('halfSeg').hidden = !showHalf;
     document.getElementById('halfSeg').innerHTML = HALVES.map(function (h) { return '<button data-half="' + h.id + '" aria-pressed="' + (h.id === state.half) + '">' + h.name + '</button>'; }).join('');
     if (!state.students.length && state.tab !== 'admin') {
-      main.innerHTML = '<div class="empty" style="margin-top:24px">עוד לא הוזנו רשימות תלמידות.' + (state.admin ? ' אפשר להוסיף אותן בלשונית "רשימות ומדרג".' : ' המנהלת או המלווה מזינות אותן פעם אחת.') + '</div>';
+      main.innerHTML = '<div class="empty" style="margin-top:24px">עוד לא הוזנו רשימות תלמידות.' + (state.admin ? ' אפשר להוסיף אותן בלשונית "רשימות ומדרג".' : ' כדי להזין אותן צריך להיכנס עם הקוד הניהולי: לחצי למעלה על "החלפת קוד".') + '</div>';
       return;
     }
     var v = { overview: overview, class: byClass, subject: bySubject, compare: compare, watch: watch, paste: paste, admin: admin }[state.tab];
@@ -546,6 +550,7 @@ input[type="number"], input[type="password"], select { border: 1px solid var(--l
       return;
     }
     var act = t.dataset.act;
+    if (act === 'logout') { state.code = null; state.admin = false; state.tab = 'overview'; store('tz-assess', null); busy(''); render(); return; }
     if (act === 'saveBands') {
       var nb = [0, 1, 2, 3, 4].map(function (i) { return i === 0 ? 0 : Number(document.getElementById('band' + i).value); });
       for (var i = 1; i < 5; i++) if (!(nb[i] > nb[i - 1]) || nb[i] > 100) { toast('כל גבול צריך להיות גדול מהקודם, עד 100'); return; }
